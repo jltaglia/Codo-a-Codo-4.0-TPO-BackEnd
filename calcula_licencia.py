@@ -21,8 +21,8 @@ def calc_lic_en_curso(id_empleado, estado, *fechas):
     '''
     CALCULA LA LICENCIA DE UN EMPLEADO
 
-    ID_EMPLEADO: ID DEL EMPLEADO
-    ESTADO: 'alta' = al empleado se le está gestionando el alta en la empresa
+    id_empleado: ID DEL EMPLEADO
+    estado: 'alta' = al empleado se le está gestionando el alta en la empresa
             'norm' = al empleado se le está calculando la licencia solicitada
     '''
     licen_curso = 0
@@ -176,4 +176,4 @@ def calc_lic_en_curso(id_empleado, estado, *fechas):
     return licen_curso, saldo_lic
 
 
-calc_lic_en_curso(1, 'norm', '11/07/2022', '21/07/2022')
+# calc_lic_en_curso(1, 'norm', '11/07/2022', '21/07/2022')

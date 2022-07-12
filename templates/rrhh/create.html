@@ -8,7 +8,7 @@
         </div>
     {% endif %}
 {% endwith %}
-    <form method="post" action="/store" enctype="multipart/form-data">
+    <form method="POST" action="/store" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
                 Ingresar Empleado
@@ -20,6 +20,16 @@
                         <label for="txtImagen">Foto</label>
                         <input id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen"></input>
                     </div>
+
+                    <!-- PARA PROBAR A VER SI PUEDO CARGAR LA FOTO UNA VEZ SELECCIONADA -->
+                    <!-- <button onclick="myFunction()">Try it</button>
+                    <script>
+                        function myFunction() {
+                            var x = document.getElementById("mySelect").length;
+                            document.getElementById("demo").innerHTML = x;
+                        }
+                    </script> -->
+
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
@@ -35,13 +45,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <label for="TipoDocDataList" class="form-label">Tipo de Doc.</label>
-                                <input id="TipoDocDataList" class="form-control" list="dlOpTipoDoc" placeholder="Elija el tipo..." name="TipoDocDataList">
-                                <datalist id="dlOpTipoDoc">
+                                <label for="TipoDocSelect" class="form-label">Tipo de Documento</label>
+                                <select class="form-select form-select-sm" id="TipoDocSelect" name="TipoDocSelect">
                                     {% for documento in documentos %}
-                                        <option value="{{documento[1]}}"></option>
+                                        <option value="{{documento[0]}}">{{documento[1]}}</option>
                                     {% endfor %}
-                                </datalist>
+                                </select>
                             </div>
                             <div class="col">
                                 <label for="txtDoc">Nº Documento</label>
@@ -59,15 +68,13 @@
                                 <label for="dateNacim">Fecha de Nacimiento</label>
                                 <input id="dateNacim" class="form-control" type="date" name="dateNacim"></input>
                             </div>
-
                             <div class="col">
-                                <label for="EstCivilDataList" class="form-label">Estado Civil</label>
-                                <input id="EstCivilDataList" class="form-control" list="dlOpEstCiv" id="EstCivilDataList" placeholder="Elija el estado..." name="EstCivilDataList">
-                                <datalist id="dlOpEstCiv">
+                                <label for="EstCivilSelect" class="form-label">Estado Civil</label>
+                                <select class="form-select form-select-sm" id="EstCivilSelect" name="EstCivilSelect">
                                     {% for estado in est_civiles %}
-                                        <option value="{{estado[1]}}"></option>
+                                        <option value="{{estado[0]}}">{{estado[1]}}</option>
                                     {% endfor %}
-                                </datalist>
+                                </select>
                             </div>
 
                         </div>
@@ -79,13 +86,12 @@
                                 <input id="dateIngreso" class="form-control" type="date" name="dateIngreso"></input>
                             </div>
                             <div class="col">
-                                <label for="CategDataList" class="form-label">Categoria</label>
-                                <input id="CategDataList" class="form-control" list="dlOpCateg" id="CategDataList" placeholder="Elija la categoria..." name="CategDataList">
-                                <datalist id="dlOpCateg">
+                                <label for="CategSelect" class="form-label">Categoria</label>
+                                <select class="form-select form-select-sm" id="CategSelect" name="CategSelect">
                                     {% for categoria in categorias %}
-                                        <option value="{{categoria[1]}}"></option>
+                                        <option value="{{categoria[0]}}">{{categoria[1]}}</option>
                                     {% endfor %}
-                                </datalist>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -96,13 +102,12 @@
                                 <input id="txtDomicilio" class="form-control" type="text" name="txtDomicilio"></input>
                             </div>
                             <div class="col">
-                                <label for="LocalidadDataList" class="form-label">Localidad y Provincia</label>
-                                <input id="LocalidadDataList" class="form-control" list="dlOpLocalidad" id="LocalidadDataList" placeholder="Elija la localidad..." name="LocalidadDataList">
-                                <datalist id="dlOpLocalidad">
+                                <label for="LocalidadSelect" class="form-label">Localidad y Provincia</label>
+                                <select class="form-select form-select-sm" id="LocalidadSelect" name="LocalidadSelect">
                                     {% for lyp in locs_y_provs %}
-                                        <option value="{{lyp[2]}}"></option>
+                                        <option value="{{lyp[0]}}">{{lyp[1]}}</option>
                                     {% endfor %}
-                                </datalist>
+                                </select>
                             </div>
                         </div>
                     </div>
