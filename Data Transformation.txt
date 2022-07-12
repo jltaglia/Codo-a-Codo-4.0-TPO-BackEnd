@@ -1,0 +1,38 @@
+DATA TRANSFORMATION
+
+- Open each 'dbf' file with Excel and then save in 'xlsx' format
+
+- Create in each of the following tables a 'id' column like this:
+	'id_empleado'   in 'personal'
+	'id_documento'  in 'tipo_doc'
+	'id_evento'     in 'eventos'
+	'id_categoria'  in 'categorias'
+	'id_parentesco' in 'parentescos'
+	'id_est_civil'  in 'est_civil'
+
+- Create 'email' column in 'personal' table
+
+- Deprecated data (for deletion):
+	from 'personal' table
+		column 'cod_zona'	
+		column 'comision' 
+		column 'historial'
+
+- In lieu of normalization, convert 'localidad' column from 'personal' table
+  into a separate table called 'localidades' and include 'cp' column in it 
+  ('cp_localidad' in 'localidades' table).
+
+- normalization of some columns, changing names to its snake_case correspondent
+- change some column names for relational propouses between tables
+
+- include in each dependant's table a column named 'id_empleado' and fill each
+  cell with its correspondent data (for each 'id_empleado' in 'personal' table).
+
+- consolidate all dependant files in only one table ('legajos')
+
+- Change the format of every date column in 'personal' and 'legajos' tables 
+  to 'yyyy-mm-dd' 
+
+- Save all 'xlsx' files in 'csv' format
+
+- import all 'csv' files to 'rrhh' mysql database

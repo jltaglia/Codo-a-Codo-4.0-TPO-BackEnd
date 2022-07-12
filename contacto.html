@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/8d6812ca02.js" crossorigin="anonymous"></script>
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <script src="./js/scripts.js"></script>
+    <title>VTxM! - Contacto</title>
+    <link rel="icon" type="image/png" href="./img/favicon.svg" sizes="16x16">
+</head>
+
+<body>
+    <div class="cont_princip">
+
+        <header id="mi_header" class="header">
+        </header>
+
+        <main class="contenido">
+            <form action="./agradecimiento.html" class="contenedor" id="frmContacto"
+                onsubmit="return valida_contacto()">
+                <label for="fnombre">Nombre</label>
+                <input type="text" id="fnombre" name="nombre" placeholder="Tu nombre..." maxlength="30">
+
+                <label for="fapellido">Apellido</label>
+                <input type="text" id="fapellido" name="apellido" placeholder="Tu Apellido..." maxlength="20">
+
+                <label for="ftelefono">Teléfono</label>
+                <input type="tel" id="ftelefono" name="telefono" placeholder="Si querés dejanos tu teléfono..."
+                    maxlength="15">
+
+                <label for="fmail">eMail</label>
+                <input type="email" id="fmail" name="email" placeholder="Tu email...">
+
+                <label for="fpais">País</label>
+                <select id="fpais" name="pais">
+                    <option value="Argentina">Argentina</option>
+                    <option value="Sudame">Sudamérica</option>
+                    <option value="Europa">Europa</option>
+                    <option value="RestoMundo">Resto del Mundo</option>
+                </select>
+
+                <label for="fmensaje">Escribinos...!</label>
+                <textarea id="fmensaje" name="mensaje" placeholder="Escribinos si te interesa algún artículo en particular indicando el código del mismo y nos comunicaremos a la brevedad, o si querés saber mas, dejarnos algún tip sobre migración o solo contarnos algo..." style="height:200px">
+                </textarea>
+
+                <input type="submit" value="Enviar">
+                <input type="reset" value="Limpiar">
+            </form>
+        </main>
+
+        <footer id="mi_footer" class="footer">
+        </footer>
+
+    </div>
+
+    <script src="./js/scripts.js"></script>
+
+</body>
+
+</html>

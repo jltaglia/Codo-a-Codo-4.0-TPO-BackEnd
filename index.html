@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/8d6812ca02.js" crossorigin="anonymous"></script>
+    <script src="./js/scripts.js"></script>
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <title>Vendo Todo Por Mudanza!</title>
+    <link rel="icon" type="image/png" href="./img/favicon.svg" sizes="16x16">
+</head>
+
+<style>
+    #miDIV {
+        animation: posiciona 800ms linear;
+    }
+
+    @keyframes posiciona {
+        from {
+            color: rgb(0, 0, 0, 0);
+            margin-top: 250px;
+        }
+
+        to {
+            color: rgb(255, 255, 255);
+            margin-top: 10px;
+        }
+    }
+</style>
+
+<body>
+    <div class="cont_princip">
+
+        <header id="mi_header" class="header">
+        </header>
+
+        <main class="contenido" id="miDIV">
+            <div>
+                <h1>Vendo Todo Por Mudanza!</h1>
+                <br>
+                <h2>Estamos vendiendo varias</h2>
+                <h2>de nuestras pertenencias</h2>
+                <h2>ya que en un corto plazo</h2>
+                <h2>nos vamos del país...</h2>
+            </div>
+            <div>
+                <ul style="list-style: none;">
+                    <li><img src="./img/ARG_flag.png" alt="Argentina!!!" style="width: 60px;
+                        height: 50px"></li>
+                    <li><i class="fa-solid fa-plane-departure" style="padding: 20px;"></i></li>
+                    <li><i class="fa-solid fa-arrow-left"></i><i class="fa-solid fa-circle-question"
+                            style="margin: 20px;"></i><i class="fa-solid fa-arrow-right"></i></li>
+                    <li><img src="./img/ESP_flag.png" alt="España!!!" style="width: 60px;
+                        height: 50px"><img src="./img/ITA_flag.png" alt="Italia!!!" style="width: 60px;
+                        height: 50px"></li>
+                </ul>
+            </div>
+            <div>
+                <a href="./articulos.html">
+                    <input class="bt-princip" type="button" value="COMPRAR">
+                </a>
+            </div>
+        </main>
+
+        <footer id="mi_footer" class="footer">
+        </footer>
+    </div>
+
+    <script src="./js/scripts.js"></script>
+
+</body>
+
+</html>
