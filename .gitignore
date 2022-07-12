@@ -2,7 +2,7 @@
 
 # - - - - - ARCHIVOS - - - - - - - 
 extensions.json
-
+.vscode
 # - - - - - CARPETAS - - - - - - - 
 varios
 test
