@@ -1,15 +1,12 @@
-# TPO FrontEnd
+# TPO BackEnd
 CURSO FULL STACK CODO A CODO 2022  
 
-** TRABAJO PRACTICO FRONTEND **
+** TRABAJO PRACTICO BACKEND **
 
-Trabajo práctico para demostración de los conocimientos 
-adquiridos durante la primera parte del curso Full Stack
-- HTML
-- CSS
-- Javascript
+Proyecto/ trabajo práctico para demostración de los conocimientos 
+adquiridos durante la segunda parte del curso Full Stack:
 
+- MYSQL
+- PYTHON
+- FLASK
 
-Link de la página:
-
-vendotodopormudanza.netlify.app
