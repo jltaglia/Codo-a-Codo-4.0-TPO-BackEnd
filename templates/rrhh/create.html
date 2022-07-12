@@ -1,0 +1,131 @@
+{% include 'header.html' %}
+{% with msgs= get_flashed_messages() %}
+    {% if msgs %}
+        <div class="alert alert-danger" role="alert">
+            {% for m in msgs %}
+                {{m}}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form method="post" action="/store" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">
+                Ingresar Empleado
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Datos del Empleado</h5>
+                <p class="card-text">
+                    <div class="form-group">
+                        <label for="txtImagen">Foto</label>
+                        <input id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen"></input>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtApellidos">Apellidos</label>
+                                <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos">
+                            </div>
+                            <div class="col">
+                                <label for="txtNombres">Nombres</label>
+                                <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="TipoDocDataList" class="form-label">Tipo de Doc.</label>
+                                <input id="TipoDocDataList" class="form-control" list="dlOpTipoDoc" placeholder="Elija el tipo..." name="TipoDocDataList">
+                                <datalist id="dlOpTipoDoc">
+                                    {% for documento in documentos %}
+                                        <option value="{{documento[1]}}"></option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                            <div class="col">
+                                <label for="txtDoc">Nº Documento</label>
+                                <input id="txtDoc" class="form-control" type="text" name="txtDoc"></input>
+                            </div>
+                            <div class="col">
+                                <label for="txtCuil">CUIL</label>
+                                <input id="txtCuil" class="form-control" type="text" name="txtCuil"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="dateNacim">Fecha de Nacimiento</label>
+                                <input id="dateNacim" class="form-control" type="date" name="dateNacim"></input>
+                            </div>
+
+                            <div class="col">
+                                <label for="EstCivilDataList" class="form-label">Estado Civil</label>
+                                <input id="EstCivilDataList" class="form-control" list="dlOpEstCiv" id="EstCivilDataList" placeholder="Elija el estado..." name="EstCivilDataList">
+                                <datalist id="dlOpEstCiv">
+                                    {% for estado in est_civiles %}
+                                        <option value="{{estado[1]}}"></option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="dateIngreso">Fecha de Ingreso</label>
+                                <input id="dateIngreso" class="form-control" type="date" name="dateIngreso"></input>
+                            </div>
+                            <div class="col">
+                                <label for="CategDataList" class="form-label">Categoria</label>
+                                <input id="CategDataList" class="form-control" list="dlOpCateg" id="CategDataList" placeholder="Elija la categoria..." name="CategDataList">
+                                <datalist id="dlOpCateg">
+                                    {% for categoria in categorias %}
+                                        <option value="{{categoria[1]}}"></option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtDomicilio">Domicilio</label>
+                                <input id="txtDomicilio" class="form-control" type="text" name="txtDomicilio"></input>
+                            </div>
+                            <div class="col">
+                                <label for="LocalidadDataList" class="form-label">Localidad y Provincia</label>
+                                <input id="LocalidadDataList" class="form-control" list="dlOpLocalidad" id="LocalidadDataList" placeholder="Elija la localidad..." name="LocalidadDataList">
+                                <datalist id="dlOpLocalidad">
+                                    {% for lyp in locs_y_provs %}
+                                        <option value="{{lyp[2]}}"></option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtTel">Teléfono</label>
+                                <input id="txtTel" class="form-control" type="text" name="txtTel"></input>
+                            </div>
+                            <div class="col">
+                                <label for="txtEmail">Email</label>
+                                <input id="txtEmail" class="form-control" type="email" name="txtEmail"></input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success" value="Agregar"></input>
+                        <a class="btn btn-primary" href="{{url_for("index")}}">Cancelar</a>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </form>
+
+{% include 'footer.html' %}

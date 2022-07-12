@@ -1,0 +1,38 @@
+{% include 'header.html' %}
+
+    <form method="post" action="/update" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">
+                Ingresar Película
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Datos de la Pelicula</h5>
+                <p class="card-text">
+                    <div class="form-group">
+                        <label for="txtID">ID</label>
+                        <input required id="txtID" class="form-control" type="text" name="txtID" value="{{peli[0]}}"></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtNombre">Nombre</label>
+                        <input required id="txtNombre" class="form-control" type="text" name="txtNombre" value="{{peli[1]}}"></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtDesc">Descripción</label>
+                        <input required id="txtDesc" class="form-control" type="text" name="txtDesc" value="{{peli[2]}}"></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtImagen">Imagen</label>
+                        <img class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=peli[3])}}" alt="">
+                        <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{peli[3]}}"></input> 
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success" value="Actualizar"></input>
+                        <a class="btn btn-primary" href="{{url_for("index")}}">Volver</a>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </form>
+
+{% include 'footer.html' %}
