@@ -14,22 +14,32 @@
                 Ingresar Empleado
             </div>
             <div class="card-body">
-                <h5 class="card-title">Datos del Empleado</h5>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">Datos del Empleado</h5>
+                        </div>
+                        <div class="col">
+                            <input name="txtIdEmpleado" class="form-control form-control-lg" type="text" aria-label="Disabled input example" disabled readonly value="NUEVO"></input>
+                        </div>
+                    </div>
+                </div>
                 <p class="card-text">
                     <div class="form-group">
                         <label for="txtImagen">Foto</label>
-                        <input id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen"></input>
+                        <img id="img_thumb_personal" class="img-thumbnail" width="100" src="#" alt="">
+                        <input id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" oninput="myFunction()"></input>
                     </div>
-
-                    <!-- PARA PROBAR A VER SI PUEDO CARGAR LA FOTO UNA VEZ SELECCIONADA -->
-                    <!-- <button onclick="myFunction()">Try it</button>
+                    <!-- PARA HACER PREVIEW DE LA FOTO UNA VEZ SELECCIONADA -->
                     <script>
-                        function myFunction() {
-                            var x = document.getElementById("mySelect").length;
-                            document.getElementById("demo").innerHTML = x;
+                        txtImagen.onchange = evt => {
+                            const [file] = txtImagen.files
+                                if (file) {
+                                    img_thumb_personal.src = URL.createObjectURL(file)
+                                }
                         }
-                    </script> -->
-
+                    </script>
+                    <!--  -->
                     <div class="form-group">
                         <div class="row">
                             <div class="col">

@@ -1,34 +1,145 @@
 {% include 'header.html' %}
-
-    <form method="post" action="/update" enctype="multipart/form-data">
+{% with msgs= get_flashed_messages() %}
+    {% if msgs %}
+        <div class="alert alert-danger" role="alert">
+            {% for m in msgs %}
+                {{m}}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form method="POST" action="/update" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
-                Ingresar Película
+                Modificar Empleado
             </div>
             <div class="card-body">
-                <h5 class="card-title">Datos de la Pelicula</h5>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">Datos del Empleado Nº</h5>
+                        </div>
+                        <div class="col">
+                            <input id="txtIdEmpleado" type="text" class="form-control form-control-lg" aria-label="Disabled input example" name="txtIdEmpleado" value="{{empleado[0]}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
                 <p class="card-text">
                     <div class="form-group">
-                        <label for="txtID">ID</label>
-                        <input required id="txtID" class="form-control" type="text" name="txtID" value="{{peli[0]}}"></input>
+                        <label for="txtImagen">Foto</label>
+                        <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
+                        <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{empleado[1]}}"></input>
+                    </div>
+                    <!-- PARA HACER PREVIEW DE LA FOTO UNA VEZ SELECCIONADA -->
+                    <script>
+                        txtImagen.onchange = evt => {
+                            const [file] = txtImagen.files
+                                if (file) {
+                                    img_thumb_personal.src = URL.createObjectURL(file)
+                                }
+                        }
+                    </script>
+                    <!--  -->
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtApellidos">Apellidos</label>
+                                <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos" value="{{empleado[3]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="txtNombres">Nombres</label>
+                                <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres" value="{{empleado[4]}}"></input>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="txtNombre">Nombre</label>
-                        <input required id="txtNombre" class="form-control" type="text" name="txtNombre" value="{{peli[1]}}"></input>
+                        <div class="row">
+                            <div class="col">
+                                <label for="TipoDocSelect" class="form-label">Tipo de Documento</label>
+                                <select class="form-select form-select-sm" id="TipoDocSelect" name="TipoDocSelect">
+                                    <option selected value="{{id_doc_empleado}}">{{tipo_doc_empleado}}</option>
+                                    {% for documento in documentos %}
+                                        <option value="{{documento[0]}}">{{documento[1]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="txtDoc">Nº Documento</label>
+                                <input id="txtDoc" class="form-control" type="text" name="txtDoc" value="{{empleado[6]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="txtCuil">CUIL</label>
+                                <input id="txtCuil" class="form-control" type="text" name="txtCuil" value="{{empleado[7]}}"></input>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="txtDesc">Descripción</label>
-                        <input required id="txtDesc" class="form-control" type="text" name="txtDesc" value="{{peli[2]}}"></input>
-                    </div>
-                    <div class="form-group">
-                        <label for="txtImagen">Imagen</label>
-                        <img class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=peli[3])}}" alt="">
-                        <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{peli[3]}}"></input> 
-                    </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="dateNacim">Fecha de Nacimiento</label>
+                                <input id="dateNacim" class="form-control" type="date" name="dateNacim" value="{{empleado[8]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="EstCivilSelect" class="form-label">Estado Civil</label>
+                                <select class="form-select form-select-sm" id="EstCivilSelect" name="EstCivilSelect">
+                                    <option selected value="{{id_est_civ_empleado}}">{{tipo_est_civ_empleado}}</option>
+                                    {% for estado in est_civiles %}
+                                        <option value="{{estado[0]}}">{{estado[1]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="dateIngreso">Fecha de Ingreso</label>
+                                <input id="dateIngreso" class="form-control" type="date" name="dateIngreso" value="{{empleado[9]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="CategSelect" class="form-label">Categoria</label>
+                                <select class="form-select form-select-sm" id="CategSelect" name="CategSelect">
+                                    <option selected value="{{id_categ_empleado}}">{{tipo_categ_empleado}}</option>
+                                    {% for categoria in categorias %}
+                                        <option value="{{categoria[0]}}">{{categoria[1]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtDomicilio">Domicilio</label>
+                                <input id="txtDomicilio" class="form-control" type="text" name="txtDomicilio" value="{{empleado[13]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="LocalidadSelect" class="form-label">Localidad y Provincia</label>
+                                <select class="form-select form-select-sm" id="LocalidadSelect" name="LocalidadSelect">
+                                    <option selected value="{{id_loc_prov_empleado}}">{{lyp_completo_empleado}}</option>
+                                    {% for lyp in locs_y_provs %}
+                                        <option value="{{lyp[0]}}">{{lyp[1]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="txtTel">Teléfono</label>
+                                <input id="txtTel" class="form-control" type="text" name="txtTel" value="{{empleado[16]}}"></input>
+                            </div>
+                            <div class="col">
+                                <label for="txtEmail">Email</label>
+                                <input id="txtEmail" class="form-control" type="email" name="txtEmail" value="{{empleado[17]}}"></input>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <input type="submit" class="btn btn-success" value="Actualizar"></input>
-                        <a class="btn btn-primary" href="{{url_for("index")}}">Volver</a>
+                        <a class="btn btn-primary" href="{{url_for("index")}}">Cancelar</a>
                     </div>
                 </p>
             </div>
