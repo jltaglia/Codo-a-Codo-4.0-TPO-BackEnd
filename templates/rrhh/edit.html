@@ -39,7 +39,6 @@
                                 <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{empleado[1]}}"></input>
                             </div>
                             <div class="col-sm">
-                                <!-- <label for="txtImagen">Foto</label> -->
                                 <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
                             </div>
                     </div>
@@ -138,9 +137,10 @@
                             </div>
                         </div>
                     </div>
+                    <br>
                     <div class="form-group">
-                        <input type="submit" class="btn btn-success" value="Actualizar"></input>
-                        <a class="btn btn-primary" href="{{url_for("index")}}">Cancelar</a>
+                        <input type="submit" class="btn btn-outline-success" value="Actualizar"></input>
+                        <a class="btn btn-outline-primary" href="{{url_for("index")}}">Cancelar</a>
                     </div>
                 </p>
             </div>

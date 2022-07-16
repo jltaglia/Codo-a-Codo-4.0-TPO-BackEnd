@@ -11,7 +11,7 @@
     <form method="POST" action="/store" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
-                Ingresar Empleado
+                Alta de Nuevo Empleado
             </div>
             <div class="card-body">
                 <div class="form-group">
@@ -39,10 +39,9 @@
                                 <input id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" oninput="myFunction()"></input>
                             </div>
                             <div class="col-sm">
-                                <label for="txtImagen">Foto</label>
                                 <img id="img_thumb_personal" class="img-thumbnail" width="100" src="#" alt="">
                             </div>
-                            
+                        </div>
                     </div>
                     <!-- PARA HACER PREVIEW DE LA FOTO UNA VEZ SELECCIONADA -->
                     <script>
@@ -54,9 +53,6 @@
                         }
                     </script>
                     <!--  -->
-                    <div class="form-group">
-                        
-                    </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
@@ -138,10 +134,10 @@
                             </div>
                         </div>
                     </div>
-
+                    <br>
                     <div class="form-group">
-                        <input type="submit" class="btn btn-success" value="Agregar"></input>
-                        <a class="btn btn-primary" href="{{url_for("index")}}">Cancelar</a>
+                        <input type="submit" class="btn btn-outline-success" value="Agregar"></input>
+                        <a class="btn btn-outline-primary" href="{{url_for("index")}}">Cancelar</a>
                     </div>
                 </p>
             </div>
