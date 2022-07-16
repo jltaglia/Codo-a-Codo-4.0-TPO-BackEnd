@@ -1,13 +1,13 @@
 {% include 'header.html' %}
-{% with msgs= get_flashed_messages() %}
-    {% if msgs %}
-        <div class="alert alert-danger" role="alert">
-            {% for m in msgs %}
-                {{m}}
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endwith %}
+    {% with msgs= get_flashed_messages() %}
+        {% if msgs %}
+            <div class="alert alert-danger" role="alert">
+                {% for m in msgs %}
+                    {{m}}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <form method="POST" action="/update" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
@@ -26,9 +26,22 @@
                 </div>
                 <p class="card-text">
                     <div class="form-group">
-                        <label for="txtImagen">Foto</label>
-                        <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
-                        <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{empleado[1]}}"></input>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label for="txtApellidos">Apellidos</label>
+                                <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos" value="{{empleado[3]}}"></input>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="txtNombres">Nombres</label>
+                                <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres" value="{{empleado[4]}}"></input>
+                            </div>
+                            <div class="col-sm-3">
+                                <input required id="txtImagen" class="form-control" type="file" accept="image/*" name="txtImagen" value="{{empleado[1]}}"></input>
+                            </div>
+                            <div class="col-sm">
+                                <!-- <label for="txtImagen">Foto</label> -->
+                                <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
+                            </div>
                     </div>
                     <!-- PARA HACER PREVIEW DE LA FOTO UNA VEZ SELECCIONADA -->
                     <script>
@@ -40,18 +53,6 @@
                         }
                     </script>
                     <!--  -->
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col">
-                                <label for="txtApellidos">Apellidos</label>
-                                <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos" value="{{empleado[3]}}"></input>
-                            </div>
-                            <div class="col">
-                                <label for="txtNombres">Nombres</label>
-                                <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres" value="{{empleado[4]}}"></input>
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col">

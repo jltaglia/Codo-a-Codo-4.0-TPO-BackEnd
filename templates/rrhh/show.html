@@ -1,0 +1,105 @@
+{% include 'header.html' %}
+    <div class="card">
+        <div class="card-header">
+            Mostrar un Empleado
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title">Datos del Empleado Nº</h5>
+                    </div>
+                    <div class="col">
+                        <input id="txtIdEmpleado" type="text" class="form-control form-control-lg" aria-label="Disabled input example" name="txtIdEmpleado" value="{{empleado[0]}}" readonly></input>
+                    </div>
+                </div>
+            </div>
+            <p class="card-text">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label for="txtApellidos">Apellidos</label>
+                            <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos" value="{{empleado[3]}}" readonly></input>
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtNombres">Nombres</label>
+                            <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres" value="{{empleado[4]}}" readonly></input>
+                        </div>
+                        <div class="col-sm">
+                            <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="TipoDocSelect" class="form-label">Tipo de Documento</label>
+                            <input id="TipoDocSelect" type="text" class="form-control" aria-label="Last name" name="TipoDocSelect" value={{tipo_doc_empleado}} readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="txtDoc">Nº Documento</label>
+                            <input id="txtDoc" class="form-control" type="text" name="txtDoc" value="{{empleado[6]}}" readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="txtCuil">CUIL</label>
+                            <input id="txtCuil" class="form-control" type="text" name="txtCuil" value="{{empleado[7]}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="dateNacim">Fecha de Nacimiento</label>
+                            <input id="dateNacim" class="form-control" type="date" name="dateNacim" value="{{empleado[8]}}" readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="EstCivilSelect" class="form-label">Estado Civil</label>
+                            <input id="EstCivilSelect" type="text" class="form-control" aria-label="Last name" name="EstCivilSelect" value={{tipo_est_civ_empleado}} readonly></input>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="dateIngreso">Fecha de Ingreso</label>
+                            <input id="dateIngreso" class="form-control" type="date" name="dateIngreso" value="{{empleado[9]}}" readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="CategSelect" class="form-label">Categoria</label>
+                            <input id="CategSelect" type="text" class="form-control" aria-label="Last name" name="CategSelect" value={{tipo_categ_empleado}} readonly></input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="txtDomicilio">Domicilio</label>
+                            <input id="txtDomicilio" class="form-control" type="text" name="txtDomicilio" value="{{empleado[13]}}" readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="LocalidadSelect" class="form-label">Localidad y Provincia</label>
+                            <input id="LocalidadSelect" type="text" class="form-control" aria-label="Last name" name="LocalidadSelect" value={{lyp_completo_empleado}} readonly></input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="txtTel">Teléfono</label>
+                            <input id="txtTel" class="form-control" type="text" name="txtTel" value="{{empleado[16]}}" readonly></input>
+                        </div>
+                        <div class="col">
+                            <label for="txtEmail">Email</label>
+                            <input id="txtEmail" class="form-control" type="email" name="txtEmail" value="{{empleado[17]}}" readonly></input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-primary" href="{{url_for("index")}}">Volver</a>
+                </div>
+            </p>
+        </div>
+    </div>
+
+{% include 'footer.html' %}

@@ -39,6 +39,115 @@ def index():
     return render_template('rrhh/index.html', empleados=empleados)
 
 
+# PARA MOSTRAR LOS DATOS DE UN EMPLEADO SIN EDITARLOS
+@app.route('/show/<int:id_empleado>')
+def show(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM rrhh.personal WHERE id_empleado=%s', (id_empleado))
+    empleado = cursor.fetchone()
+
+    cursor.execute('SELECT * FROM rrhh.tipo_doc WHERE id_documento=%s;', empleado[5])
+    id_doc_empleado, tipo_doc_empleado = cursor.fetchone()
+
+    sql = 'SELECT * FROM rrhh.tipo_doc;'
+    cursor.execute(sql)
+    tipo_docs = cursor.fetchall()
+
+    cursor.execute('SELECT * FROM rrhh.est_civil WHERE id_est_civil=%s;', empleado[12])
+    id_est_civ_empleado, tipo_est_civ_empleado = cursor.fetchone()
+
+    sql = 'SELECT * FROM rrhh.est_civil;'
+    cursor.execute(sql)
+    est_civiles = cursor.fetchall()
+
+    cursor.execute('SELECT * FROM rrhh.categorias WHERE id_categoria=%s;', empleado[11])
+    id_categ_empleado, tipo_categ_empleado = cursor.fetchone()
+
+    sql = 'SELECT * FROM rrhh.categorias;'
+    cursor.execute(sql)
+    categorias = cursor.fetchall()
+
+    sql = 'SELECT id_localidad, nombre FROM rrhh.localidades WHERE id_localidad=%s;'
+    cursor.execute(sql, empleado[14])
+    id_local_empleado, nombre_local_empleado = cursor.fetchone()
+
+    sql = 'SELECT id_provincia, nombre FROM rrhh.provincias WHERE id_provincia=%s;'
+    cursor.execute(sql, empleado[15])
+    id_prov_empleado, nombre_prov_empleado = cursor.fetchone()
+    id_loc_prov_empleado = str(id_local_empleado) + '-' + str(id_prov_empleado)
+    lyp_completo_empleado = nombre_local_empleado + ' - ' + nombre_prov_empleado
+
+    sql = '''SELECT 
+                CONCAT(loc.id_localidad,'-',prov.id_provincia) AS loc_prov,
+                CONCAT(loc.nombre, ' - ', prov.nombre) AS lyp_completo  
+                FROM rrhh.localidades AS loc
+                JOIN rrhh.provincias AS prov
+                WHERE loc.id_provincia = prov.id_provincia
+                ORDER BY lyp_completo;'''
+    cursor.execute(sql)
+    locs_y_provs = cursor.fetchall()
+
+    return render_template('rrhh/show.html',
+        empleado=empleado,
+        id_doc_empleado=id_doc_empleado,
+        tipo_doc_empleado=tipo_doc_empleado,
+        documentos=tipo_docs,
+        id_est_civ_empleado=id_est_civ_empleado,
+        tipo_est_civ_empleado=tipo_est_civ_empleado,
+        est_civiles=est_civiles,
+        id_categ_empleado=id_categ_empleado,
+        tipo_categ_empleado=tipo_categ_empleado,
+        categorias=categorias,
+        id_loc_prov_empleado=id_loc_prov_empleado,
+        lyp_completo_empleado=lyp_completo_empleado,
+        locs_y_provs=locs_y_provs,
+        )
+
+
+# PARA INGRESAR LOS PARAMETROS DE FILTRADO DEL PADRON DE EMPLEADOS
+@app.route('/filter')
+def filter():
+    return render_template('rrhh/filter.html')
+
+
+# PARA FILTRAR EL PADRON DE EMPLEADOS UNA VEZ INGRESADOS PARAMETROS DE FILTRO
+@app.route('/filtered', methods=['POST'])
+def filtered():
+    apellidos = request.form['txtApellidos'].upper()
+    nombres = request.form['txtNombres'].upper()
+
+    if nombres != '' and apellidos != '':
+        sql = f'''SELECT * FROM rrhh.personal WHERE 
+                    LOCATE("{apellidos}", apellidos) > 0 
+                    AND 
+                    LOCATE("{nombres}", nombres) > 0 
+                    ORDER BY apellidos, nombres;'''
+    elif apellidos != '':
+        sql = f'''SELECT * FROM rrhh.personal WHERE 
+                    LOCATE("{apellidos}", apellidos) > 0 
+                    ORDER BY apellidos, nombres;'''
+    elif nombres != '':
+        sql = f'''SELECT * FROM rrhh.personal 
+                    WHERE LOCATE("{nombres}", nombres) > 0 
+                    ORDER BY apellidos, nombres;'''
+    else:
+        sql = 'SELECT * FROM rrhh.personal ORDER BY apellidos, nombres;'
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute(sql)
+    empleados = cursor.fetchall()
+
+    if empleados == ():
+        flash(apellidos + ', ' + nombres + ' no existe en el padrón...!')
+        return redirect(url_for('filter'))
+
+    return render_template('rrhh/index.html', empleados=empleados)
+
+
 # PARA CREAR UN NUEVO EMPLEADO
 @app.route('/create')
 def create():
@@ -147,8 +256,8 @@ def storage():
 def update():
     id_empleado = request.form['txtIdEmpleado']
     img = request.files['txtImagen']
-    apellidos = request.form['txtApellidos']
-    nombres = request.form['txtNombres']
+    apellidos = request.form['txtApellidos'].upper()
+    nombres = request.form['txtNombres'].upper()
     id_tipo_doc = request.form['TipoDocSelect']
     nro_doc = request.form['txtDoc']
     cuil = request.form['txtCuil']
@@ -164,7 +273,7 @@ def update():
 
     if img.filename == '' or apellidos == '' or nombres == '' or id_tipo_doc == '' or nro_doc == '' or cuil == '' or fecha_nac == '' or id_est_civil == '' or fch_ingreso == '' or id_categoria == '' or domicilio == '' or id_localidad == '' or id_provincia == '':
         flash('Faltan datos obligatorios!')
-        return redirect(url_for('create'))
+        return redirect(url_for('update'))
 
     now = datetime.now()
     tiempo = now.strftime('%Y%H%M%S')
