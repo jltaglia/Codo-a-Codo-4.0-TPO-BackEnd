@@ -387,13 +387,53 @@ def destroy(id_empleado):
     cursor.execute(query, id_empleado)
     registro = cursor.fetchone()
     os.remove(MY_PATH + '/uploads/' + registro[0])
-    # os.remove(os.path.join(app.config['CARPETA'], registro[0]))
     cursor.execute('DELETE FROM rrhh.personal WHERE id_empleado=%s', (id_empleado))
 
     conn.commit()
     conn.close()
     return redirect('/')
 
+
+# PARA INGRESAR UNA LICENCIA A UN EMPLEADO
+@app.route('/licencia/<int:id_empleado>')
+def licencia(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    query = '''SELECT id_empleado, apellidos, nombres, saldo_licencia, licencia_curso, fecha_regreso 
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(query, id_empleado)
+    empleado = cursor.fetchone()
+    conn.close()
+
+    return render_template('rrhh/licencias.html', empleado=empleado)
+
+
+# PARA FILTRAR EL PADRON DE EMPLEADOS UNA VEZ INGRESADOS PARAMETROS DE FILTRO
+@app.route('/updlicencia', methods=['POST'])
+def updlicencia():
+    apellidos = request.form['txtApellidos'].upper()
+    nombres = request.form['txtNombres'].upper()
+    fecha_inicio = request.form['dateFechaInicio']
+    fecha_fin = request.form['dateFechaFin']
+
+    if fecha_fin
+        flash('LaFaltan datos obligatorios!')
+        return redirect(url_for('update'))
+
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute(sql)
+    empleados = cursor.fetchall()
+
+    if empleados == ():
+        flash(apellidos + ', ' + nombres + ' no existe en el padrón...!')
+        return redirect(url_for('filter'))
+
+    return render_template('rrhh/index.html', empleados=empleados)
 
 if __name__ == '__main__':
     app.run(debug=True)
