@@ -1,6 +1,7 @@
 # Listado de Archivos y Carpetas a ignorar
 
 # - - - - - ARCHIVOS - - - - - - - 
+test.py
 extensions.json
 .vscode
 # - - - - - CARPETAS - - - - - - - 

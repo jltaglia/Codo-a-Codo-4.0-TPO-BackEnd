@@ -1,0 +1,53 @@
+{% include 'header.html' %}
+    {% with msgs= get_flashed_messages() %}
+        {% if msgs %}
+            <div class="alert alert-danger" role="alert">
+                {% for m in msgs %}
+                    {{m}}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST" action="/updlicencia" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">
+                Ingresar la fecha de inicio y finalizacion de la licencia
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">{{empleado[1]}}, {{empleado[2]}}</h5>
+                        </div>
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Legajo Nº</span>
+                                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[0]}}" readonly>
+                                  </div>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="dateFechaInicio">Inicio de la licencia</label>
+                            <input id="dateFechaInicio" type="date" class="form-control" placeholder="dd/mm/aaaa" aria-label="First name" name="dateFechaInicio" ></input>
+                        </div>
+                        <div class="col">
+                            <label for="dateFechaFin">Fin de la licencia</label>
+                            <input id="dateFechaFin" type="date" class="form-control" placeholder="dd/mm/aaaa" aria-label="Last name" name="dateFechaFin" ></input>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-outline-success" value="Confirmar"></input>
+                    <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% include 'footer.html' %}
