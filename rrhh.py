@@ -234,16 +234,18 @@ def storage():
     now = datetime.now()
     tiempo = now.strftime('%Y%H%M%S')
     if img.filename != '':
-        nuevo_nombre_img = str(id_empleado).zfill(3) + '_' + tiempo + img.filename[-4:]
+        nuevo_nombre_img = str(id_empleado).zfill(3) + '_' + tiempo + '.' + img.filename.split(".")[-1]
         img.save(MY_PATH + '/uploads/' + nuevo_nombre_img)
         # img.save(os.path.join(app.config['CARPETA'], nuevo_nombre_img))
+
     # CALCULO LA LICENCIA EN CURSO Y LOS DIAS QUE LE CORRESPONDEN
-    licen_curso, saldo_licen = cl.calc_lic_en_curso(id_empleado, 'alta')
+    licen_curso, saldo_licen, fecha_regreso, _ = cl.calc_lic_en_curso(id_empleado, 'alta')
     #
+
     sql = '''UPDATE rrhh.personal 
-            SET foto=%s, saldo_licencia=%s, licencia_curso=%s WHERE id_empleado=%s;
-            '''.format(nuevo_nombre_img, saldo_licen, licen_curso, id_empleado)
-    datos = (nuevo_nombre_img, saldo_licen, licen_curso, id_empleado)
+            SET foto=%s, saldo_licencia=%s, licencia_curso=%s, fecha_regreso=%s WHERE id_empleado=%s;
+            '''.format(nuevo_nombre_img, saldo_licen, licen_curso, fecha_regreso, id_empleado,)
+    datos = (nuevo_nombre_img, saldo_licen, licen_curso, fecha_regreso, id_empleado)
     cursor.execute(sql, datos)
 
     conn.commit()
@@ -278,7 +280,7 @@ def update():
     now = datetime.now()
     tiempo = now.strftime('%Y%H%M%S')
     if img.filename != '':
-       nuevo_nombre_img = str(id_empleado).zfill(3) + '_' + tiempo + img.filename[-4:]
+       nuevo_nombre_img = str(id_empleado).zfill(3) + '_' + tiempo  + '.' + img.filename.split(".")[-1]
        img.save(MY_PATH + '/uploads/' + nuevo_nombre_img)
 
     conn = mysql.connect()
@@ -377,9 +379,28 @@ def edit(id_empleado):
         )
 
 
-# PARA ELIMINAR UN EMPLEADO
-@app.route('/destroy/<int:id_empleado>')
-def destroy(id_empleado):
+# PARA CONFIRMAR LA ELIMINACION DE UN EMPLEADO
+@app.route('/borrar/<int:id_empleado>')
+def borrar(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    sql = '''SELECT id_empleado, foto, apellidos, nombres 
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(sql, id_empleado)
+    empleado = cursor.fetchone()
+
+    conn.close()
+
+    return render_template('rrhh/borrar.html', empleado=empleado)
+
+
+# PARA ELIMINAR DEFINITIVAMENTE AL EMPLEADO SELECCIONADO
+@app.route('/destroy', methods=['POST'])
+def destroy():
+    id_empleado = request.form['txtIdEmpleado']
+
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -400,40 +421,73 @@ def licencia(id_empleado):
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    query = '''SELECT id_empleado, apellidos, nombres, saldo_licencia, licencia_curso, fecha_regreso 
+    sql = 'SELECT id_evento, descripcion FROM rrhh.eventos;'
+    cursor.execute(sql)
+    eventos = cursor.fetchall()
+
+    sql = '''SELECT id_empleado, apellidos, nombres, saldo_licencia, licencia_curso, fecha_regreso 
                 FROM rrhh.personal 
                 WHERE id_empleado=%s;'''
-    cursor.execute(query, id_empleado)
+    cursor.execute(sql, id_empleado)
     empleado = cursor.fetchone()
+
     conn.close()
 
-    return render_template('rrhh/licencias.html', empleado=empleado)
+    return render_template('rrhh/licencias.html', empleado=empleado, eventos=eventos)
 
 
-# PARA FILTRAR EL PADRON DE EMPLEADOS UNA VEZ INGRESADOS PARAMETROS DE FILTRO
+# PARA INGRESAR LAS FECHAS DE LA LICENCIA
 @app.route('/updlicencia', methods=['POST'])
 def updlicencia():
-    apellidos = request.form['txtApellidos'].upper()
-    nombres = request.form['txtNombres'].upper()
+    id_empleado = request.form['txtIdEmpleado']
     fecha_inicio = request.form['dateFechaInicio']
     fecha_fin = request.form['dateFechaFin']
+    licencia_curso = request.form['txtLicenciaEnCurso']
+    saldo_licencia = request.form['txtSaldoLicEnCurso']
+    afecta_licencia = bool(request.form['rdoSiAfectaNo'])
+    fecha_regreso = request.form['txtFechaRegreso']
+    id_evento = request.form['txtIdEvento']
 
-    if fecha_fin
-        flash('LaFaltan datos obligatorios!')
-        return redirect(url_for('update'))
+    if fecha_fin == '' or fecha_inicio == '':
+        flash('Faltan datos obligatorios!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
 
+    if cl.stod(fecha_inicio) > cl.stod(fecha_fin):
+        flash('La fecha de inicio no puede ser mayor a la fecha de fin!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
+
+    if cl.stod(fecha_inicio) < cl.stod(fecha_regreso):
+        flash('Para la fecha de inicio ingresada el empleado todavía está en licencia anterior!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
+
+    nva_licen_curso, nvo_saldo_lic, nva_fecha_regreso, cant_dias = cl.calc_lic_en_curso(id_empleado,
+                                                                         'lic',
+                                                                         fecha_inicio,
+                                                                         fecha_fin,
+                                                                         licencia_curso,
+                                                                         saldo_licencia,
+                                                                         fecha_regreso,
+                                                                         afecta_licencia)
 
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute(sql)
-    empleados = cursor.fetchall()
+    sql = '''UPDATE rrhh.personal
+            SET saldo_licencia=%s, licencia_curso=%s, fecha_regreso=%s
+            WHERE id_empleado=%s;
+            '''.format(nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
+    datos = (nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
+    cursor.execute(sql, datos)
 
-    if empleados == ():
-        flash(apellidos + ', ' + nombres + ' no existe en el padrón...!')
-        return redirect(url_for('filter'))
+    sql = '''INSERT INTO rrhh.legajos(id_empleado, fecha_desde, fecha_hasta, cd_evento, cantidad)
+            VALUES (id_empleado =%s, fecha_desde=%s, fecha_hasta=%s, cd-evento=%s, cantidad=%s);
+            '''.format(id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
+    datos = (id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
+    cursor.execute(sql, datos)
 
-    return render_template('rrhh/index.html', empleados=empleados)
+
+    conn.commit()
+    conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,43 @@
+{% include 'header.html' %}
+    {% with msgs= get_flashed_messages() %}
+        {% if msgs %}
+            <div class="alert alert-danger" role="alert">
+                {% for m in msgs %}
+                    {{m}}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST" action="/destroy" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    ¿ESTA SEGURO DE ELIMINAR EL EMPLEADO?
+                </h4>
+                <h5>
+                    Este cambio no se puede deshacer...!
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">{{empleado[2]}}, {{empleado[3]}} - Legajo Nº {{empleado[0]}}</h5>
+                            <input type="text" readonly id="txtIdEmpleado" name="txtIdEmpleado" value="{{empleado[0]}}" hidden>
+                        </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-outline-danger" value="Confirmar"></input>
+                    <a class="btn btn-outline-success" href="{{url_for("index")}}">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% include 'footer.html' %}
