@@ -130,11 +130,42 @@
                             var fechaFin = new Date(document.getElementById("dateFechaFin").value);
                             var dias = fechaFin.getTime() - fechaInicio.getTime();
                             var dias = Math.round(dias / (1000 * 60 * 60 * 24)) + 1;
-                            document.getElementById("txtDiasLicencia").value = dias;
                             var fechaRegreso = new Date(fechaFin);
                             fechaRegreso.setDate(fechaRegreso.getDate() + 1);
+
+
+                            
+                            document.getElementById("txtDiasLicencia").value = dias;
                             document.getElementById("dateFechaRegreso").value = fechaRegreso.toISOString().substring(0, 10);
                         }
+
+                        function old_calcula_dias_y_regreso() {
+                            var fechaIni = new Date(document.getElementById("dateFechaInicio").value);
+                            var fechaFin = new Date(document.getElementById("dateFechaFin").value);
+                            var timeDiff = Math.abs(fechaFin.getTime() - fechaIni.getTime());
+                            var diffDays = Math.ceil((timeDiff / (1000 * 3600 * 24)) + 1);
+                            var fecha_regreso = new Date(fechaFin);
+                            fecha_regreso.setDate(fecha_regreso.getDate() + 1);
+
+                            // CALCULA EL SIGUIENTE DIA A LA FECHA DE FINALIZACION DE LA LICENCIA
+                            // POR LAS DUDAS QUE SEA NO HABIL PARA SUMARLE LOS DIAS QUE HAGAN FALTA
+                            // HASTA EL PROXIMO HABIL
+                            var DIA_DEL_TRABAJO = new Date(str(fecha_regreso.getFullYear()) + '-05-01');
+                            var NAVIDAD = new Date(str(fecha_regreso.getFullYear()) + '-12-25');
+                            var ANIO_NUEVO = new Date(str(fecha_regreso.getFullYear()) + '-01-01');
+
+                            if (fecha_regreso.getDay() == 0 | fecha_regreso == DIA_DEL_TRABAJO | fecha_regreso == NAVIDAD | fecha_regreso == ANIO_NUEVO) {
+                                fecha_regreso.setDate(fecha_regreso.getDate() + 1);
+                            }
+
+                            document.getElementById("dateFechaRegreso").value = fecha_regreso.toISOString().substring(0, 10);
+                            document.getElementById("txtDiasLicencia").value = diffDays;
+                        }
+
+
+
+
+
                     </script>
                     <!--  -->
                 </div>
