@@ -22,8 +22,9 @@ DATA TRANSFORMATION
   into a separate table called 'localidades' and include 'cp' column in it 
   ('cp_localidad' in 'localidades' table).
 
-- normalization of some columns, changing names to its snake_case correspondent
-- change some column names for relational propouses between tables
+- normalizate columns by changing its names to snake_case correspondent
+
+- change column names for set relations between tables
 
 - include in each dependant's table a column named 'id_empleado' and fill each
   cell with its correspondent data (for each 'id_empleado' in 'personal' table).

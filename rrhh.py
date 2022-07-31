@@ -5,7 +5,10 @@ from datetime import datetime
 import os
 import calcula_licencia as cl
 from pprint import pprint
-
+import datetime as dt
+import tempfile
+import win32api
+import win32print
 
 app = Flask(__name__)
 app.secret_key = 'Clave'
@@ -425,7 +428,8 @@ def licencia(id_empleado):
     cursor.execute(sql)
     eventos = cursor.fetchall()
 
-    sql = '''SELECT id_empleado, apellidos, nombres, saldo_licencia, licencia_curso, fecha_regreso 
+    sql = '''SELECT id_empleado, apellidos, nombres,
+                fecha_ingreso, saldo_licencia, licencia_curso, fecha_regreso 
                 FROM rrhh.personal 
                 WHERE id_empleado=%s;'''
     cursor.execute(sql, id_empleado)
@@ -447,6 +451,8 @@ def updlicencia():
     afecta_licencia = bool(request.form['rdoSiAfectaNo'])
     fecha_regreso = request.form['txtFechaRegreso']
     id_evento = request.form['txtIdEvento']
+    fecha_ingreso = request.form['txtFechaIngreso']
+    imprime_planilla = bool(request.form['chbxImprimePlanilla'])
 
     if fecha_fin == '' or fecha_inicio == '':
         flash('Faltan datos obligatorios!')
@@ -460,34 +466,129 @@ def updlicencia():
         flash('Para la fecha de inicio ingresada el empleado todavía está en licencia anterior!')
         return redirect(url_for('licencia', id_empleado=id_empleado))
 
-    nva_licen_curso, nvo_saldo_lic, nva_fecha_regreso, cant_dias = cl.calc_lic_en_curso(id_empleado,
-                                                                         'lic',
-                                                                         fecha_inicio,
-                                                                         fecha_fin,
-                                                                         licencia_curso,
-                                                                         saldo_licencia,
-                                                                         fecha_regreso,
-                                                                         afecta_licencia)
+    nva_licen_curso, nvo_saldo_lic, nva_fecha_regreso, cant_dias, se_paso = cl.calc_lic_en_curso(id_empleado,
+                                                                                                'lic',
+                                                                                                fecha_ingreso,
+                                                                                                fecha_inicio,
+                                                                                                fecha_fin,
+                                                                                                licencia_curso,
+                                                                                                saldo_licencia,
+                                                                                                fecha_regreso,
+                                                                                                afecta_licencia)
 
     conn = mysql.connect()
     cursor = conn.cursor()
 
+    # TRAIGO LOS DATOS ANTERIORES ANTES DE ACTUALIZAR LOS VALORES DE LA LICENCIA
+    sql = '''SELECT apellidos, nombres, saldo_licencia, licencia_curso
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(sql, id_empleado)
+    empleado = cursor.fetchone()
+
+    # ACTUALIZO LOS DATOS DE LA LICENCIA
     sql = '''UPDATE rrhh.personal
             SET saldo_licencia=%s, licencia_curso=%s, fecha_regreso=%s
             WHERE id_empleado=%s;
             '''.format(nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
     datos = (nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
     cursor.execute(sql, datos)
-
+    
+    # INSERTO EL REGISTRO DE LA LICENCIA EN LA TABLA DE LEGAJOS
     sql = '''INSERT INTO rrhh.legajos(id_empleado, fecha_desde, fecha_hasta, cd_evento, cantidad)
-            VALUES (id_empleado =%s, fecha_desde=%s, fecha_hasta=%s, cd-evento=%s, cantidad=%s);
+            VALUES (%s,%s,%s,%s,%s);
             '''.format(id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
     datos = (id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
     cursor.execute(sql, datos)
-
-
     conn.commit()
+
+    # OBTENGO EL DETALLE DEL TIPO DE LICENCIA DESDE LA TABLA DE EVENTOS
+    sql = 'SELECT descripcion FROM rrhh.eventos WHERE id_evento=%s;'
+    cursor.execute(sql, id_evento)
+    tipo_licencia = cursor.fetchone()
+
     conn.close()
+
+    if imprime_planilla:
+        # ----------------------------------------------------------------------------------
+        # PARA IMPRIMIR LA LICENCIA
+        # ----------------------------------------------------------------------------------
+        planilla = ''
+        for i in range (1,3):
+            planilla += '    EL FIDEO FELIZ de Jose F. Pes\n'
+            planilla += '    Perito Moreno 276, Rawson.(CH) - Tel/Fax (0280) 448-2993 448-5516\n'
+            planilla += '    fideofelizrw@gmail.com\n'
+            planilla += '    ---------------------------------------------------------------------------\n\n'
+            planilla +=f'        PLANILLA DE LICENCIA          ({tipo_licencia})\n'
+            planilla +=f'        ====================                              Rawson, CH {dt.date.today()}\n\n'
+
+            if i == 1:
+                planilla += '      Por intermedio de la presente le solicito a Usted que mi próximo goce\n'
+            else:
+                planilla += '      Por intermedio de la presente le comunicamos a Ud. que el goce vacacional \n      solicitado, correspondiente al año '
+
+            if i == 2:
+                if se_paso: # si se pasó de año
+                    planilla += str(nva_licen_curso - 1) + ' / ' + str(nva_licen_curso)
+                else: # no se pasó de año
+                    planilla += str(nva_licen_curso)
+
+            if i == 1:
+                planilla += f'      vacacional me sea otorgado desde el día {fecha_inicio} y hasta el día\n      '
+            else:
+                planilla += f', le ha sido otorgado desde \n      el día {fecha_inicio} y hasta el día'
+
+            planilla += f'{fecha_fin}, '
+
+            if i == 1:
+                planilla += 'asumiendo la responsabilidad de reintegrarme el día '
+            else:
+                planilla += 'debiendose reintegrar el día\n'
+
+            if i == 1:
+                planilla += f'{nva_fecha_regreso}\n      a mi primera obligación.\n'
+            else:
+                planilla += f'      {nva_fecha_regreso} a su primera obligación.\n'
+
+            if i == 1:
+                planilla += '\n\n\n\n'
+            else:
+                planilla += '\n      Sirva la presente de instrumento de notificación fehaciente.\n\n\n\n\n'
+
+            if i == 1:
+                planilla += '         ............................\n'
+                planilla += f'            {empleado[0]}, {empleado[1]}\n'
+                planilla += '                Dependiente\n\n\n'
+            else:
+                planilla += '         ............................\n\n'
+                planilla += '               p/EL FIDEO FELIZ\n\n\n'
+
+            if afecta_licencia:
+                vie_dias_lic = cl.dias_d_lic(fecha_ingreso, fecha_inicio)
+
+                if se_paso:
+                    resto = abs(vie_dias_lic - cant_dias)
+                    dias_lic = vie_dias_lic - resto
+
+                    reng1 = f'    {str(empleado[2])} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
+                    reng1 += f'    {str(resto)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'
+                else:
+                    tomados = vie_dias_lic - empleado[2] 
+
+                    reng1 = f'''    {(tomados + cant_dias)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'''
+            else:
+                reng1 = ' '
+
+            if i == 1:
+                planilla += '\n\n\n\n'
+            else:
+                planilla += reng1
+
+        filename = tempfile.mktemp(".txt")
+        open(filename, "w").write(planilla)
+        win32api.ShellExecute(0, "printto", filename, '"%s"' % win32print.GetDefaultPrinter(), ".", 0)
+
+        return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)

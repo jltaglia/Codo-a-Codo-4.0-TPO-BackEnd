@@ -1,113 +1,176 @@
 {% include 'header.html' %}
-    {% with msgs= get_flashed_messages() %}
-        {% if msgs %}
-            <div class="alert alert-danger" role="alert">
-                {% for m in msgs %}
-                    {{m}}
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    <form method="POST" action="/updlicencia" enctype="multipart/form-data">
-        <div class="card">
-            <div class="card-header">
-                Ingresar la fecha de inicio y finalizacion de la licencia
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col">
-                            <h5 class="card-title">{{empleado[1]}}, {{empleado[2]}}</h5>
-                        </div>
-                        <div class="col">
-                            <h5>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Legajo Nº</span>
-                                    <input id="txtIdEmpleado" name="txtIdEmpleado" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[0]}}" readonly>
-                                  </div>
-                            </h5>
-                        </div>
+{% with msgs= get_flashed_messages() %}
+{% if msgs %}
+<div class="alert alert-danger" role="alert">
+    {% for m in msgs %}
+    {{m}}
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<form method="POST" action="/updlicencia" enctype="multipart/form-data">
+    <div class="card">
+        <div class="card-header">
+            Ingresar la fecha de inicio y finalizacion de la licencia
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title">{{empleado[1]}}, {{empleado[2]}}</h5>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <h5>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Licencia en curso</span>
-                                    <input id=txtLicenciaEnCurso" name="txtLicenciaEnCurso" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[4]}}" readonly>
-                                  </div>
-                            </h5>
-                        </div>
-                        <div class="col">
-                            <h5>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Saldo de licencia [días]</span>
-                                    <input id="txtSaldoLicEnCurso" name="txtSaldoLicEnCurso" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[3]}}" readonly>
-                                  </div>
-                            </h5>
-                        </div>
-                        <div class="col">
-                            <h5>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Fecha de Regreso</span>
-                                    <input id="txtFechaRegreso" name="txtFechaRegreso" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[5]}}" readonly>
-                                  </div>
-                            </h5>
-                        </div>
+                    <div class="col">
+                        <h5>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Legajo Nº</span>
+                                <input id="txtIdEmpleado" name="txtIdEmpleado" type="text" class="form-control"
+                                    aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[0]}}"
+                                    readonly>
+                            </div>
+                        </h5>
+                    </div>
+                    <div class="col">
+                        <h5>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Fecha de Ingreso</span>
+                                <input id="txtFechaIngreso" name="txtFechaIngreso" type="date" class="form-control"
+                                    aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[3]}}"
+                                    readonly>
+                            </div>
+                        </h5>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col">
-                            <label for="dateFechaInicio">Inicio de la licencia</label>
-                            <input id="dateFechaInicio" type="date" class="form-control" placeholder="dd/mm/aaaa" aria-label="First name" name="dateFechaInicio" ></input>
-                        </div>
-                        <div class="col">
-                            <label for="dateFechaFin">Fin de la licencia</label>
-                            <input id="dateFechaFin" type="date" class="form-control" placeholder="dd/mm/aaaa" aria-label="Last name" name="dateFechaFin" ></input>
-                        </div>
-                        <div class="col">
-                            <label for="txtIdEvento" class="form-label">Tipo de Licencia</label>
-                            <select class="form-select form-select-sm" id="txtIdEvento" name="txtIdEvento">
-                                {% for evento in eventos %}
-                                    <option value="{{evento[0]}}">{{evento[1]}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col">
-                            <label for="dateFechaFin">La licencia ingresada...</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="rdoSiAfectaNo" id="rdoAfecta" value="True" checked>
-                                <label class="form-check-label" for="rdoAfecta">
-                                    Afecta a la licencia en curso
-                                </label>
+                <div class="row">
+                    <div class="col">
+                        <h5>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Licencia en curso</span>
+                                <input id=txtLicenciaEnCurso" name="txtLicenciaEnCurso" type="text" class="form-control"
+                                    aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[5]}}"
+                                    readonly>
                             </div>
-                        </div>
+                        </h5>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="rdoSiAfectaNo" id="rdoNoAfecta" value="False">
-                                <label class="form-check-label" for="rdoNoAfecta">
-                                    No afecta a la licencia en curso
-                                </label>
+                    <div class="col">
+                        <h5>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Saldo de licencia [días]</span>
+                                <input id="txtSaldoLicEnCurso" name="txtSaldoLicEnCurso" type="text"
+                                    class="form-control" aria-label="Username" aria-describedby="basic-addon1"
+                                    value="{{empleado[4]}}" readonly>
                             </div>
-                        </div>
+                        </h5>
+                    </div>
+                    <div class="col">
+                        <h5>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Finalización última licencia</span>
+                                <input id="txtFechaRegreso" name="txtFechaRegreso" type="date" class="form-control"
+                                    aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[6]}}"
+                                    readonly>
+                            </div>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="dateFechaInicio">Inicio de la licencia</label>
+                        <input id="dateFechaInicio" type="date" class="form-control" placeholder="dd/mm/aaaa"
+                            aria-label="First name" name="dateFechaInicio" onchange="calcula_dias_y_regreso()"></input>
+                    </div>
+                    <div class="col">
+                        <label for="dateFechaFin">Fin de la licencia</label>
+                        <input id="dateFechaFin" type="date" class="form-control" placeholder="dd/mm/aaaa"
+                            aria-label="Last name" name="dateFechaFin" onchange="calcula_dias_y_regreso()"></input>
+                    </div>
+                    <div class="col">
+                        <label for="txtIdEvento" class="form-label">Tipo de Licencia</label>
+                        <select class="form-select form-select-sm" id="txtIdEvento" name="txtIdEvento">
+                            {% for evento in eventos %}
+                            <option value="{{evento[0]}}">{{evento[1]}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <br>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-outline-success" value="Confirmar"></input>
-                    <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <label for="dateFechaFin">La licencia ingresada...</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rdoSiAfectaNo" id="rdoAfecta"
+                                value="True" checked>
+                            <label class="form-check-label" for="rdoAfecta">
+                                Afecta a la licencia en curso
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rdoSiAfectaNo" id="rdoNoAfecta"
+                                value="False">
+                            <label class="form-check-label" for="rdoNoAfecta">
+                                No afecta a la licencia en curso
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label for="txtDiasLicencia">Cantidad de días de licencia</label>
+                        <input id="txtDiasLicencia" type="text" class="form-control" aria-label="Last name"
+                            name="txtDiasLicencia" value="0" readonly></input>
+                        <label for="dateFechaRegreso">Fecha estimada de regreso</label>
+                        <input id="dateFechaRegreso" type="date" class="form-control" aria-label="Last name"
+                            name="dateFechaRegreso"></input>
+                    </div>
+                    <!-- PARA HACER PREVIEW DE LA FECHA DE REGRESO Y CANTIDAD DE DIAS DE LICENCIA -->
+                    <script>
+                        function calcula_dias_y_regreso() {
+                            var fechaInicio = new Date(document.getElementById("dateFechaInicio").value);
+                            var fechaFin = new Date(document.getElementById("dateFechaFin").value);
+                            var dias = fechaFin.getTime() - fechaInicio.getTime();
+                            var dias = Math.round(dias / (1000 * 60 * 60 * 24)) + 1;
+                            document.getElementById("txtDiasLicencia").value = dias;
+                            var fechaRegreso = new Date(fechaFin);
+                            fechaRegreso.setDate(fechaRegreso.getDate() + 1);
+                            document.getElementById("dateFechaRegreso").value = fechaRegreso.toISOString().substring(0, 10);
+                        }
+                    </script>
+                    <!--  -->
                 </div>
             </div>
+            <br>
+            <div class="form-group">
+                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" href="#ConfirmaLic">Confirmar</button>
+                <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="ConfirmaLic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h6 class="modal-title" id="staticBackdropLabel">¿ Confirma la Licencia ?</h6>
+                            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-check form-check-reverse">
+                                <input class="form-check-input" type="checkbox" value="" id="chbxImprimePlanilla" name="chbxImprimePlanilla" checked>
+                                <label class="form-check-label" for="ImprimeSiNo">
+                                    Imprime la planilla de licencia
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-success">Confirma</button>
+                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Vuelve</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- -->
         </div>
-    </form>
+    </div>
+</form>
 
 {% include 'footer.html' %}
