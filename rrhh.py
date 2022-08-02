@@ -466,7 +466,7 @@ def updlicencia():
         flash('Para la fecha de inicio ingresada el empleado todavía está en licencia anterior!')
         return redirect(url_for('licencia', id_empleado=id_empleado))
 
-    nva_licen_curso, nvo_saldo_lic, nva_fecha_regreso, cant_dias, se_paso = cl.calc_lic_en_curso(id_empleado,
+    nva_licen_curso, nvo_saldo_lic, nva_fecha_fin, nva_fecha_regreso, cant_dias, se_paso = cl.calc_lic_en_curso(id_empleado,
                                                                                                 'lic',
                                                                                                 fecha_ingreso,
                                                                                                 fecha_inicio,
@@ -475,6 +475,8 @@ def updlicencia():
                                                                                                 saldo_licencia,
                                                                                                 fecha_regreso,
                                                                                                 afecta_licencia)
+    fecha_inicio = cl.stod(fecha_inicio)
+    fecha_ingreso = cl.stod(fecha_ingreso)
 
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -497,8 +499,8 @@ def updlicencia():
     # INSERTO EL REGISTRO DE LA LICENCIA EN LA TABLA DE LEGAJOS
     sql = '''INSERT INTO rrhh.legajos(id_empleado, fecha_desde, fecha_hasta, cd_evento, cantidad)
             VALUES (%s,%s,%s,%s,%s);
-            '''.format(id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
-    datos = (id_empleado, fecha_inicio, fecha_fin, id_evento, cant_dias)
+            '''.format(id_empleado, fecha_inicio, nva_fecha_fin , id_evento, cant_dias)
+    datos = (id_empleado, fecha_inicio, nva_fecha_fin, id_evento, cant_dias)
     cursor.execute(sql, datos)
     conn.commit()
 
@@ -508,7 +510,7 @@ def updlicencia():
     tipo_licencia = cursor.fetchone()
 
     conn.close()
-
+   
     if imprime_planilla:
         # ----------------------------------------------------------------------------------
         # PARA IMPRIMIR LA LICENCIA
@@ -519,8 +521,8 @@ def updlicencia():
             planilla += '    Perito Moreno 276, Rawson.(CH) - Tel/Fax (0280) 448-2993 448-5516\n'
             planilla += '    fideofelizrw@gmail.com\n'
             planilla += '    ---------------------------------------------------------------------------\n\n'
-            planilla +=f'        PLANILLA DE LICENCIA          ({tipo_licencia})\n'
-            planilla +=f'        ====================                              Rawson, CH {dt.date.today()}\n\n'
+            planilla +=f'        PLANILLA DE LICENCIA          ({tipo_licencia[0]})\n'
+            planilla +=f'        ====================                           Rawson, CH. {(dt.date.today()).strftime("%d/%m/%Y")}\n\n'
 
             if i == 1:
                 planilla += '      Por intermedio de la presente le solicito a Usted que mi próximo goce\n'
@@ -534,11 +536,11 @@ def updlicencia():
                     planilla += str(nva_licen_curso)
 
             if i == 1:
-                planilla += f'      vacacional me sea otorgado desde el día {fecha_inicio} y hasta el día\n      '
+                planilla += f'      vacacional me sea otorgado desde el día {fecha_inicio.strftime("%d/%m/%Y")} y hasta el día\n      '
             else:
-                planilla += f', le ha sido otorgado desde \n      el día {fecha_inicio} y hasta el día'
+                planilla += f', le ha sido otorgado desde el día\n      {fecha_inicio.strftime("%d/%m/%Y")} y hasta el día '
 
-            planilla += f'{fecha_fin}, '
+            planilla += f'{nva_fecha_fin.strftime("%d/%m/%Y")}, '
 
             if i == 1:
                 planilla += 'asumiendo la responsabilidad de reintegrarme el día '
@@ -546,9 +548,9 @@ def updlicencia():
                 planilla += 'debiendose reintegrar el día\n'
 
             if i == 1:
-                planilla += f'{nva_fecha_regreso}\n      a mi primera obligación.\n'
+                planilla += f'{nva_fecha_regreso.strftime("%d/%m/%Y")}\n      a mi primera obligación.\n'
             else:
-                planilla += f'      {nva_fecha_regreso} a su primera obligación.\n'
+                planilla += f'      {nva_fecha_regreso.strftime("%d/%m/%Y")} a su primera obligación.\n'
 
             if i == 1:
                 planilla += '\n\n\n\n'
@@ -573,9 +575,9 @@ def updlicencia():
                     reng1 = f'    {str(empleado[2])} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
                     reng1 += f'    {str(resto)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'
                 else:
-                    tomados = vie_dias_lic - empleado[2] 
+                    tomados = vie_dias_lic - empleado[2]
 
-                    reng1 = f'''    {(tomados + cant_dias)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'''
+                    reng1 = f'''    {(tomados + cant_dias)} dias de {str(vie_dias_lic)} / Licencia {str(nva_licen_curso)}'''
             else:
                 reng1 = ' '
 
@@ -588,7 +590,7 @@ def updlicencia():
         open(filename, "w").write(planilla)
         win32api.ShellExecute(0, "printto", filename, '"%s"' % win32print.GetDefaultPrinter(), ".", 0)
 
-        return redirect('/')
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)
