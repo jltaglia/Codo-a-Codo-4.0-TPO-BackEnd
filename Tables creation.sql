@@ -63,9 +63,11 @@ fecha_regreso DATE
 );
 
 CREATE TABLE legajos (
+id_legajo SMALLINT NOT NULL,
 id_empleado SMALLINT NOT NULL,
 fecha_desde DATE NOT NULL,
 fecha_hasta DATE NOT NULL,
+id_evento SMALLINT NOT NULL,
 cd_evento SMALLINT NOT NULL,
 cantidad SMALLINT NOT NULL
 );

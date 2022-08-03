@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 # DATABASE PARAMETERS
-DB_NAME = 'test'
+DB_NAME = 'rrhh'
 DB_USER = 'root'
 DB_PASSWORD = ''
 

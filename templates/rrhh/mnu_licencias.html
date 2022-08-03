@@ -1,0 +1,166 @@
+{% include 'header.html' %}
+{% with msgs= get_flashed_messages() %}
+{% if msgs %}
+<div class="alert alert-danger" role="alert">
+    {% for m in msgs %}
+    {{m}}
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<style>
+    #btn-back-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: none;
+        z-index: 50000;
+    }
+</style>
+<button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+<!-- <form method="POST" action="/ing_licencias" enctype="multipart/form-data"> -->
+    <div class="sticky-top">
+        <div class="card">
+            <div class="card-header">
+                Detalles de Licencias del Empleado
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">{{empleado[1]}}, {{empleado[2]}}</h5>
+                        </div>
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Legajo Nº</span>
+                                    <input id="txtIdEmpleado" name="txtIdEmpleado" type="text" class="form-control"
+                                        aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[0]}}"
+                                        readonly>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Fecha de Ingreso</span>
+                                    <input id="txtFechaIngreso" name="txtFechaIngreso" type="date" class="form-control"
+                                        aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[3]}}"
+                                        readonly>
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Licencia en curso</span>
+                                    <input id=txtLicenciaEnCurso" name="txtLicenciaEnCurso" type="text" class="form-control"
+                                        aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[5]}}"
+                                        readonly>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Saldo de licencia [días]</span>
+                                    <input id="txtSaldoLicEnCurso" name="txtSaldoLicEnCurso" type="text"
+                                        class="form-control" aria-label="Username" aria-describedby="basic-addon1"
+                                        value="{{empleado[4]}}" readonly>
+                                </div>
+                            </h5>
+                        </div>
+                        <div class="col">
+                            <h5>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Finalización última licencia</span>
+                                    <input id="txtFechaRegreso" name="txtFechaRegreso" type="date" class="form-control"
+                                        aria-label="Username" aria-describedby="basic-addon1" value="{{empleado[6]}}"
+                                        readonly>
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="form-group">
+                        <a class="btn btn-outline-success" href="/ing_licencias/{{empleado[0]}}">Nueva Licencia</a>
+                        <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Comenzó</th>
+                            <th>Finalizó</th>
+                            <th>Tipo de Licencia</th>
+                            <th>Días Tomados</th>
+                            <th>Acciones</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for legajo in legajos %}
+                            <tr>
+                                <td>{{legajo[1].strftime("%d/%m/%Y")}}</td>
+                                <td>{{legajo[2].strftime("%d/%m/%Y")}}</td>
+                                <td>{{legajo[3]}}</td>
+                                <td>{{legajo[4]}}</td>
+                                <td>
+                                    <a class="btn btn-outline-info" href="/show/{{empleado[0]}}">Reimprimir</a>
+                                    <a class="btn btn-outline-primary" href="/edit/{{empleado[0]}}">Editar</a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-danger" href="/borrar/{{empleado[0]}}">Borrar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //Get the button
+        let mybutton = document.getElementById("btn-back-to-top");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+        scrollFunction();
+        };
+
+        function scrollFunction() {
+        if (
+        document.body.scrollTop > 20 ||
+        document.documentElement.scrollTop > 20
+        ) {
+        mybutton.style.display = "block";
+        } else {
+        mybutton.style.display = "none";
+        }
+        }
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.addEventListener("click", backToTop);
+
+        function backToTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        }
+    </script>
+<!-- </form> -->
+
+{% include 'footer.html' %}

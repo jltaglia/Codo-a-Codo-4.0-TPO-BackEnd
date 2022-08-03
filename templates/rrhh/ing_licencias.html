@@ -157,9 +157,11 @@
                 </div>
             </div>
             <br>
-            <div class="form-group">
-                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" href="#ConfirmaLic">Confirmar</button>
-                <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
+            <div class="row">
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" href="#ConfirmaLic">Confirmar</button>
+                    <a class="btn btn-outline-primary" href="/licencia/{{empleado[0]}}">Volver</a>
+                </div>
             </div>
             <!-- Modal -->
             <div class="modal fade" id="ConfirmaLic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

@@ -418,9 +418,39 @@ def destroy():
     return redirect('/')
 
 
-# PARA INGRESAR UNA LICENCIA A UN EMPLEADO
+# PARA DECIDIR SOBRE LICENCIAS DE UN EMPLEADO
 @app.route('/licencia/<int:id_empleado>')
 def licencia(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    sql = '''SELECT id_empleado, apellidos, nombres,
+                fecha_ingreso, saldo_licencia, licencia_curso, fecha_regreso 
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(sql, id_empleado)
+    empleado = cursor.fetchone()
+
+    sql = '''SELECT lg.id_legajo, lg.fecha_desde, lg.fecha_hasta, ev.descripcion, lg.cantidad
+            FROM
+                rrhh.legajos AS lg
+                    JOIN
+                rrhh.eventos AS ev
+            WHERE
+                lg.id_empleado = %s
+                    AND lg.cd_evento = ev.cd_evento
+            ORDER BY fecha_desde DESC;'''
+    cursor.execute(sql, id_empleado)
+    legajos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('rrhh/mnu_licencias.html', empleado=empleado, legajos=legajos)
+
+
+# PARA INGRESAR UNA LICENCIA A UN EMPLEADO
+@app.route('/ing_licencias/<int:id_empleado>')
+def ing_licencias(id_empleado):
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -437,7 +467,7 @@ def licencia(id_empleado):
 
     conn.close()
 
-    return render_template('rrhh/licencias.html', empleado=empleado, eventos=eventos)
+    return render_template('rrhh/ing_licencias.html', empleado=empleado, eventos=eventos)
 
 
 # PARA INGRESAR LAS FECHAS DE LA LICENCIA

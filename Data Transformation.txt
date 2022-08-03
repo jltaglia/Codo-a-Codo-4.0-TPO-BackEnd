@@ -6,9 +6,15 @@ DATA TRANSFORMATION
 	'id_empleado'   in 'personal'
 	'id_documento'  in 'tipo_doc'
 	'id_evento'     in 'eventos'
+	'id_evento'     in 'legajos'
+	'id_legajo'     in 'legajos'
 	'id_categoria'  in 'categorias'
 	'id_parentesco' in 'parentescos'
 	'id_est_civil'  in 'est_civil'
+	
+- Populate column 'id_legajo' in 'legajos' table following the this procedure:
+	. First order all columns by 'fecha_desde' then by 'fecha_hasta' and finally by 'id_empleado'
+	. Next fill column 'id_legajo' with numbers from 1 to n
 
 - Create 'email' column in 'personal' table
 
@@ -36,4 +42,13 @@ DATA TRANSFORMATION
 
 - Save all 'xlsx' files in 'csv' format
 
-- import all 'csv' files to 'rrhh' mysql database
+- Create 'rrhh' MySQL database
+
+- Create all tables in 'rrhh' database using 'Tables creation.sql' MySQL script
+
+- import all 'csv' files to 'rrhh' database
+
+- Run 'actualiza_legajos.py' to fill 'id_evento' column in 'legajos' table with corresponding 'id_evento' 
+  from 'eventos' table 
+
+- Modify table 'legajos': transform 'id_legajo' column in table PK and Auto Incremental
