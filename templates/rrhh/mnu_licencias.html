@@ -90,6 +90,13 @@
                 <div class="row">
                     <div class="form-group">
                         <a class="btn btn-outline-success" href="/ing_licencias/{{empleado[0]}}">Nueva Licencia</a>
+                        
+                        <a class="btn btn-outline-info" href="/show/{{empleado[0]}}">Reimprimir Ultima Licencia</a>
+                        
+                        <a class="btn btn-outline-secondary" href="/edit/{{empleado[0]}}">Editar Ultima Licencia</a>
+                        
+                        <a class="btn btn-outline-danger" href="/borrar/{{empleado[0]}}">Borrar Ultima Licencia</a>
+                        
                         <a class="btn btn-outline-primary" href="{{url_for("index")}}">Volver</a>
                     </div>
                 </div>
@@ -106,8 +113,6 @@
                             <th>Finalizó</th>
                             <th>Tipo de Licencia</th>
                             <th>Días Tomados</th>
-                            <th>Acciones</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,13 +122,6 @@
                                 <td>{{legajo[2].strftime("%d/%m/%Y")}}</td>
                                 <td>{{legajo[3]}}</td>
                                 <td>{{legajo[4]}}</td>
-                                <td>
-                                    <a class="btn btn-outline-info" href="/show/{{empleado[0]}}">Reimprimir</a>
-                                    <a class="btn btn-outline-primary" href="/edit/{{empleado[0]}}">Editar</a>
-                                </td>
-                                <td>
-                                    <a class="btn btn-outline-danger" href="/borrar/{{empleado[0]}}">Borrar</a>
-                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
