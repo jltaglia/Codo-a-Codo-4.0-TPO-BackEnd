@@ -6,9 +6,11 @@ import os
 import calcula_licencia as cl
 from pprint import pprint
 import datetime as dt
+
+# DEPENDENCIAS PARA IMPRIMIR LAS PLANILLA DE LICENCIAS
 import tempfile
 import win32api
-import win32print
+from fpdf import FPDF
 
 app = Flask(__name__)
 app.secret_key = 'Clave'
@@ -23,6 +25,7 @@ mysql.init_app(app)
 
 MY_PATH = os.path.dirname(os.path.abspath(__file__))
 CARPETA = os.path.join('uploads')
+PDFS = os.path.join(MY_PATH, 'planillas')
 app.config['CARPETA'] = CARPETA
 app.secret_key = 'Clave'
 
@@ -418,7 +421,7 @@ def destroy():
     return redirect('/')
 
 
-# PARA DECIDIR SOBRE LICENCIAS DE UN EMPLEADO
+# PARA OPERAR SOBRE LAS LICENCIAS DE UN EMPLEADO
 @app.route('/licencia/<int:id_empleado>')
 def licencia(id_empleado):
     conn = mysql.connect()
@@ -468,6 +471,53 @@ def ing_licencias(id_empleado):
     conn.close()
 
     return render_template('rrhh/ing_licencias.html', empleado=empleado, eventos=eventos)
+
+
+# PARA REIMPRIMIR LA ULTIMA LICENCIA DE UN EMPLEADO
+@app.route('/reimp_licencia/<int:id_empleado>')
+def reimp_licencia(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    sql = '''SELECT * FROM rrhh.legajos 
+                WHERE id_empleado = %s
+                ORDER BY id_legajo DESC
+                LIMIT 1;'''
+    cursor.execute(sql, id_empleado)
+    legajo = cursor.fetchone()
+
+    conn.close()
+
+    # BUSCA EL ARCHIVO DE LA LICENCIA Y LO MUESTRA PARA IMPRIMIRLO
+    nombre_pdf = f'{id_empleado}_{legajo[2].strftime("%d-%m-%Y")}_{legajo[3].strftime("%d-%m-%Y")}.pdf'
+    pdf_file_name = os.path.join(PDFS, nombre_pdf)
+    win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+    # --------------------------------------------------------------
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    sql = '''SELECT id_empleado, apellidos, nombres,
+                fecha_ingreso, saldo_licencia, licencia_curso, fecha_regreso 
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(sql, id_empleado)
+    empleado = cursor.fetchone()
+
+    sql = '''SELECT lg.id_legajo, lg.fecha_desde, lg.fecha_hasta, ev.descripcion, lg.cantidad
+            FROM
+                rrhh.legajos AS lg
+                    JOIN
+                rrhh.eventos AS ev
+            WHERE
+                lg.id_empleado = %s
+                    AND lg.cd_evento = ev.cd_evento
+            ORDER BY fecha_desde DESC;'''
+    cursor.execute(sql, id_empleado)
+    legajos = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('rrhh/mnu_licencias.html', empleado=empleado, legajos=legajos)
 
 
 # PARA INGRESAR LAS FECHAS DE LA LICENCIA
@@ -540,7 +590,7 @@ def updlicencia():
     tipo_licencia = cursor.fetchone()
 
     conn.close()
-   
+
     if imprime_planilla:
         # ----------------------------------------------------------------------------------
         # PARA IMPRIMIR LA LICENCIA
@@ -550,14 +600,19 @@ def updlicencia():
             planilla += '    EL FIDEO FELIZ de Jose F. Pes\n'
             planilla += '    Perito Moreno 276, Rawson.(CH) - Tel/Fax (0280) 448-2993 448-5516\n'
             planilla += '    fideofelizrw@gmail.com\n'
-            planilla += '    ---------------------------------------------------------------------------\n\n'
+            planilla += '    ___________________________________________________________________________\n\n\n'
             planilla +=f'        PLANILLA DE LICENCIA          ({tipo_licencia[0]})\n'
-            planilla +=f'        ====================                           Rawson, CH. {(dt.date.today()).strftime("%d/%m/%Y")}\n\n'
+            planilla += '        ____________________\n\n'
+            for space in range(0,110):
+                planilla += ' '
+
+            planilla +=f'Rawson, CH. {(dt.date.today()).strftime("%d/%m/%Y")}\n\n'
 
             if i == 1:
-                planilla += '      Por intermedio de la presente le solicito a Usted que mi próximo goce\n'
+                planilla += '      Por intermedio de la presente le solicito a Usted que mi próximo goce vacacional me sea \n'
             else:
-                planilla += '      Por intermedio de la presente le comunicamos a Ud. que el goce vacacional \n      solicitado, correspondiente al año '
+                planilla += '      Por intermedio de la presente le comunicamos a Ud. que el goce vacacional solicitado,\n'
+                planilla += '      correspondiente al año '
 
             if i == 2:
                 if se_paso: # si se pasó de año
@@ -566,21 +621,21 @@ def updlicencia():
                     planilla += str(nva_licen_curso)
 
             if i == 1:
-                planilla += f'      vacacional me sea otorgado desde el día {fecha_inicio.strftime("%d/%m/%Y")} y hasta el día\n      '
+                planilla += f'      otorgado desde el día {fecha_inicio.strftime("%d/%m/%Y")} y hasta el día '
             else:
-                planilla += f', le ha sido otorgado desde el día\n      {fecha_inicio.strftime("%d/%m/%Y")} y hasta el día '
+                planilla += f', le ha sido otorgado desde el día {fecha_inicio.strftime("%d/%m/%Y")} y hasta el\n      día '
 
             planilla += f'{nva_fecha_fin.strftime("%d/%m/%Y")}, '
 
             if i == 1:
-                planilla += 'asumiendo la responsabilidad de reintegrarme el día '
+                planilla += 'asumiendo la responsabilidad\n'
             else:
-                planilla += 'debiendose reintegrar el día\n'
+                planilla += 'debiendose reintegrar el día '
 
             if i == 1:
-                planilla += f'{nva_fecha_regreso.strftime("%d/%m/%Y")}\n      a mi primera obligación.\n'
+                planilla += f'      de reintegrarme el día {nva_fecha_regreso.strftime("%d/%m/%Y")} a mi primera obligación.\n\n\n'
             else:
-                planilla += f'      {nva_fecha_regreso.strftime("%d/%m/%Y")} a su primera obligación.\n'
+                planilla += f'{nva_fecha_regreso.strftime("%d/%m/%Y")} a su primera obligación.\n'
 
             if i == 1:
                 planilla += '\n\n\n\n'
@@ -588,26 +643,31 @@ def updlicencia():
                 planilla += '\n      Sirva la presente de instrumento de notificación fehaciente.\n\n\n\n\n'
 
             if i == 1:
-                planilla += '         ............................\n'
+                planilla += '         ....................................................\n'
                 planilla += f'            {empleado[0]}, {empleado[1]}\n'
                 planilla += '                Dependiente\n\n\n'
             else:
-                planilla += '         ............................\n\n'
-                planilla += '               p/EL FIDEO FELIZ\n\n\n'
+                planilla += '         ....................................................\n\n'
+                planilla += '                   p/EL FIDEO FELIZ\n'
 
             if afecta_licencia:
                 vie_dias_lic = cl.dias_d_lic(fecha_ingreso, fecha_inicio)
-
+                reng1 = ''
                 if se_paso:
                     resto = abs(vie_dias_lic - cant_dias)
                     dias_lic = vie_dias_lic - resto
-
-                    reng1 = f'    {str(empleado[2])} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
+                    
+                    for space in range(0,100):
+                        reng1 += ' '
+                    reng1 += f'    {str(empleado[2])} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
+                    for space in range(0,100):
+                        reng1 += ' '
                     reng1 += f'    {str(resto)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'
                 else:
                     tomados = vie_dias_lic - empleado[2]
-
-                    reng1 = f'''    {(tomados + cant_dias)} dias de {str(vie_dias_lic)} / Licencia {str(nva_licen_curso)}'''
+                    for space in range(0,100):
+                        reng1 += ' '
+                    reng1 += f'''    {(tomados + cant_dias)} dias de {str(vie_dias_lic)} / Licencia {str(nva_licen_curso)}'''
             else:
                 reng1 = ' '
 
@@ -616,9 +676,33 @@ def updlicencia():
             else:
                 planilla += reng1
 
-        filename = tempfile.mktemp(".txt")
-        open(filename, "w").write(planilla)
-        win32api.ShellExecute(0, "printto", filename, '"%s"' % win32print.GetDefaultPrinter(), ".", 0)
+        # ----------------------------------------------------------------------------------------------------
+        # PARA IMPRIMIR LA LICENCIA EN UN PDF
+        # ----------------------------------------------------------------------------------------------------
+        source_file_name = tempfile.mktemp(".txt")
+        open(source_file_name, "w").write(planilla)
+        nombre_pdf = f'{id_empleado}_{fecha_inicio.strftime("%d-%m-%Y")}_{fecha_fin.strftime("%d-%m-%Y")}.pdf'
+
+        pdf_file_name = os.path.join(PDFS, nombre_pdf)
+        # save FPDF() class into
+        # a variable pdf
+        pdf = FPDF()
+        # Add a page
+        pdf.add_page()
+        # set style and size of font
+        # that you want in the pdf
+        pdf.set_font("Arial", size = 12)
+        # open the text file in read mode
+        f = open(source_file_name, "r")
+        # insert the texts in pdf
+        for x in f:
+            pdf.cell(50, 5, txt = x, ln = 1, align = 'L')
+        # save the pdf with name .pdf
+        pdf.output(pdf_file_name)
+
+        #
+        win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+        # -----------------------------------------------------------------------------------------------------
 
     return redirect('/')
 

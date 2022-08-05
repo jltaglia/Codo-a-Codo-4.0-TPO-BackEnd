@@ -2,6 +2,7 @@
 
 # - - - - - ARCHIVOS - - - - - - - 
 test.py
+pdf_test.py
 extensions.json
 .vscode
 *.mod
