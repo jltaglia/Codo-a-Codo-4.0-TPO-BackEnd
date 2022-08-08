@@ -6,6 +6,7 @@ import os
 import calcula_licencia as cl
 from pprint import pprint
 import datetime as dt
+from os.path import exists
 
 # DEPENDENCIAS PARA IMPRIMIR LAS PLANILLA DE LICENCIAS
 import tempfile
@@ -416,6 +417,22 @@ def destroy():
     os.remove(MY_PATH + '/uploads/' + registro[0])
     cursor.execute('DELETE FROM rrhh.personal WHERE id_empleado=%s', (id_empleado))
 
+
+    # --------------------------------------------------------------
+    # BORRAR EL O LOS REGISTROS DE LICENCIA EN LOS LEGAJOS
+    # --------------------------------------------------------------
+    sql = '''DELETE FROM rrhh.legajos WHERE id_empleado = %s;'''
+    cursor.execute(sql, id_empleado)
+
+
+    nombre_pdf = f'{id_empleado}_*.pdf'
+    pdf_file_name = os.path.join(PDFS, nombre_pdf)
+    while os.path.exists(pdf_file_name):
+        os.remove(pdf_file_name)
+
+
+
+
     conn.commit()
     conn.close()
     return redirect('/')
@@ -441,7 +458,7 @@ def licencia(id_empleado):
                 rrhh.eventos AS ev
             WHERE
                 lg.id_empleado = %s
-                    AND lg.cd_evento = ev.cd_evento
+                    AND lg.id_evento = ev.id_evento
             ORDER BY fecha_desde DESC;'''
     cursor.execute(sql, id_empleado)
     legajos = cursor.fetchall()
@@ -471,53 +488,6 @@ def ing_licencias(id_empleado):
     conn.close()
 
     return render_template('rrhh/ing_licencias.html', empleado=empleado, eventos=eventos)
-
-
-# PARA REIMPRIMIR LA ULTIMA LICENCIA DE UN EMPLEADO
-@app.route('/reimp_licencia/<int:id_empleado>')
-def reimp_licencia(id_empleado):
-    conn = mysql.connect()
-    cursor = conn.cursor()
-
-    sql = '''SELECT * FROM rrhh.legajos 
-                WHERE id_empleado = %s
-                ORDER BY id_legajo DESC
-                LIMIT 1;'''
-    cursor.execute(sql, id_empleado)
-    legajo = cursor.fetchone()
-
-    conn.close()
-
-    # BUSCA EL ARCHIVO DE LA LICENCIA Y LO MUESTRA PARA IMPRIMIRLO
-    nombre_pdf = f'{id_empleado}_{legajo[2].strftime("%d-%m-%Y")}_{legajo[3].strftime("%d-%m-%Y")}.pdf'
-    pdf_file_name = os.path.join(PDFS, nombre_pdf)
-    win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
-    # --------------------------------------------------------------
-
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    sql = '''SELECT id_empleado, apellidos, nombres,
-                fecha_ingreso, saldo_licencia, licencia_curso, fecha_regreso 
-                FROM rrhh.personal 
-                WHERE id_empleado=%s;'''
-    cursor.execute(sql, id_empleado)
-    empleado = cursor.fetchone()
-
-    sql = '''SELECT lg.id_legajo, lg.fecha_desde, lg.fecha_hasta, ev.descripcion, lg.cantidad
-            FROM
-                rrhh.legajos AS lg
-                    JOIN
-                rrhh.eventos AS ev
-            WHERE
-                lg.id_empleado = %s
-                    AND lg.cd_evento = ev.cd_evento
-            ORDER BY fecha_desde DESC;'''
-    cursor.execute(sql, id_empleado)
-    legajos = cursor.fetchall()
-
-    conn.close()
-
-    return render_template('rrhh/mnu_licencias.html', empleado=empleado, legajos=legajos)
 
 
 # PARA INGRESAR LAS FECHAS DE LA LICENCIA
@@ -577,7 +547,7 @@ def updlicencia():
     cursor.execute(sql, datos)
     
     # INSERTO EL REGISTRO DE LA LICENCIA EN LA TABLA DE LEGAJOS
-    sql = '''INSERT INTO rrhh.legajos(id_empleado, fecha_desde, fecha_hasta, cd_evento, cantidad)
+    sql = '''INSERT INTO rrhh.legajos(id_empleado, fecha_desde, fecha_hasta, id_evento, cantidad)
             VALUES (%s,%s,%s,%s,%s);
             '''.format(id_empleado, fecha_inicio, nva_fecha_fin , id_evento, cant_dias)
     datos = (id_empleado, fecha_inicio, nva_fecha_fin, id_evento, cant_dias)
@@ -645,7 +615,7 @@ def updlicencia():
             if i == 1:
                 planilla += '         ....................................................\n'
                 planilla += f'            {empleado[0]}, {empleado[1]}\n'
-                planilla += '                Dependiente\n\n\n'
+                planilla += '                Dependiente\n\n'
             else:
                 planilla += '         ....................................................\n\n'
                 planilla += '                   p/EL FIDEO FELIZ\n'
@@ -656,13 +626,12 @@ def updlicencia():
                 if se_paso:
                     resto = abs(vie_dias_lic - cant_dias)
                     dias_lic = vie_dias_lic - resto
-                    
                     for space in range(0,100):
                         reng1 += ' '
-                    reng1 += f'    {str(empleado[2])} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
+                    reng1 += f'    {str(vie_dias_lic)} dias de {str(vie_dias_lic)} / Licencia {str(empleado[3])}\n'
                     for space in range(0,100):
                         reng1 += ' '
-                    reng1 += f'    {str(resto)} dias de {str(dias_lic)} / Licencia {str(nva_licen_curso)}'
+                    reng1 += f'    {str(resto)} dias de {str(vie_dias_lic)} / Licencia {str(nva_licen_curso)}'
                 else:
                     tomados = vie_dias_lic - empleado[2]
                     for space in range(0,100):
@@ -681,7 +650,7 @@ def updlicencia():
         # ----------------------------------------------------------------------------------------------------
         source_file_name = tempfile.mktemp(".txt")
         open(source_file_name, "w").write(planilla)
-        nombre_pdf = f'{id_empleado}_{fecha_inicio.strftime("%d-%m-%Y")}_{fecha_fin.strftime("%d-%m-%Y")}.pdf'
+        nombre_pdf = f'{id_empleado}_{fecha_inicio.strftime("%d-%m-%Y")}_{nva_fecha_fin.strftime("%d-%m-%Y")}.pdf'
 
         pdf_file_name = os.path.join(PDFS, nombre_pdf)
         # save FPDF() class into
@@ -705,6 +674,113 @@ def updlicencia():
         # -----------------------------------------------------------------------------------------------------
 
     return redirect('/')
+
+# PARA REIMPRIMIR LA ULTIMA LICENCIA DE UN EMPLEADO
+@app.route('/reimp_licencia/<int:id_empleado>')
+def reimp_licencia(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    sql = '''SELECT * FROM rrhh.legajos 
+                WHERE id_empleado = %s
+                ORDER BY id_legajo DESC
+                LIMIT 1;'''
+    cursor.execute(sql, id_empleado)
+    legajo = cursor.fetchone()
+
+    conn.close()
+
+    if legajo is None:
+        flash('No hay licencias para este empleado...!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
+    # ---------------------------------------------------------------------------
+    # BUSCA EL PDF DE LA LICENCIA Y LO MUESTRA PARA IMPRIMIRLO
+    nombre_pdf = f'{id_empleado}_{legajo[2].strftime("%d-%m-%Y")}_{legajo[3].strftime("%d-%m-%Y")}.pdf'
+    pdf_file_name = os.path.join(PDFS, nombre_pdf)
+    try:
+        win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+    except:
+        flash('No existe la planilla requerida...!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
+    # ---------------------------------------------------------------------------
+
+    return redirect(url_for('licencia', id_empleado=id_empleado))
+
+
+# PARA ELIMINAR UNA LICENCIA
+@app.route('/borrar_lic/<int:id_empleado>')
+def borrar_lic(id_empleado):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    # ---------------------------------------------------------------------------
+    # TRAIGO LOS DATOS ANTERIORES ANTES DE ACTUALIZAR LOS VALORES DE LA LICENCIA
+    # ---------------------------------------------------------------------------
+    sql = '''SELECT * FROM rrhh.legajos 
+                WHERE id_empleado = %s
+                ORDER BY id_legajo DESC
+                LIMIT 1;'''
+    cursor.execute(sql, id_empleado)
+    legajo = cursor.fetchone()
+
+    sql = '''SELECT id_empleado, fecha_ingreso, saldo_licencia, licencia_curso, fecha_regreso 
+                FROM rrhh.personal 
+                WHERE id_empleado=%s;'''
+    cursor.execute(sql, id_empleado)
+    empleado = cursor.fetchone()
+
+    conn.close()
+
+    if legajo is None:
+        flash('No hay licencias para este empleado...!')
+        return redirect(url_for('licencia', id_empleado=id_empleado))
+
+    # --------------------------------------------------------------
+    # BUSCA EL ARCHIVO DE LA LICENCIA Y LO ELIMINA
+    # --------------------------------------------------------------
+    nombre_pdf = f'{id_empleado}_{legajo[2].strftime("%d-%m-%Y")}_{legajo[3].strftime("%d-%m-%Y")}.pdf'
+    pdf_file_name = os.path.join(PDFS, nombre_pdf)
+    if os.path.exists(pdf_file_name):
+        os.remove(pdf_file_name)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # --------------------------------------------------------------
+    # BORRA EL REGISTRO DE LA LICENCIA EN LOS LEGAJOS
+    # --------------------------------------------------------------
+    sql = '''DELETE FROM rrhh.legajos WHERE id_legajo = %s;'''
+    cursor.execute(sql, legajo[0])
+
+    # --------------------------------------------------------------
+    # ACTUALIZA EL SALDO DE LA LICENCIA
+    # --------------------------------------------------------------
+    # empleado[1] = fecha de inreso del empleado
+    # legajo[2] = fecha de inicio de la licencia a borrar
+    nva_fecha_regreso = legajo[2]
+    dias_de_lic_corresp = cl.dias_d_lic(empleado[1], nva_fecha_regreso)
+    # empleado[2] = saldo de licencia en curso antes de borrar la licencia
+    # legajo[6] = cantidad de dias tomados en la licencia a borrar
+    if empleado[2] + legajo[6] > dias_de_lic_corresp:
+        nvo_saldo_lic = empleado[2] + legajo[6] - dias_de_lic_corresp
+        nva_licen_curso = empleado[3] - 1
+    else:
+        nvo_saldo_lic = empleado[2] + legajo[6]
+        nva_licen_curso = empleado[3]
+
+    sql = '''UPDATE rrhh.personal
+            SET saldo_licencia=%s, licencia_curso=%s, fecha_regreso=%s
+            WHERE id_empleado=%s;
+            '''.format(nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
+    datos = (nvo_saldo_lic, nva_licen_curso, nva_fecha_regreso, id_empleado)
+    cursor.execute(sql, datos)
+    # --------------------------------------------------------------
+
+    conn.commit()
+    conn.close()
+
+    flash('La ultima licencia ha sido eliminada...!')
+    return redirect(url_for('licencia', id_empleado=id_empleado))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

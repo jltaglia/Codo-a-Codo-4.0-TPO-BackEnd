@@ -124,7 +124,7 @@ def calc_lic_en_curso(id_empleado, estado, *parametros):
                 # SE LE ASIGNAN LOS DIAS DEL SIGUIENTE AÑO 
                 # SEGUN LA ANTIGÜEDAD A ENERO DEL PROXIMO AÑO
                 licen_curso += 1
-                saldo_lic = dias_d_lic(stod(fecha_ingreso), stod((str(licen_curso) + '-01-01'))) - abs(saldo_lic)
+                saldo_lic = dias_d_lic(fecha_ingreso, stod((str(licen_curso) + '-01-01'))) - abs(saldo_lic)
                 pasado = True
 
     return licen_curso, saldo_lic, fecha_fin, fecha_regreso, dias_lic, pasado
