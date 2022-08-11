@@ -11,6 +11,12 @@ DATA TRANSFORMATION
 	'id_categoria'  in 'categorias'
 	'id_parentesco' in 'parentescos'
 	'id_est_civil'  in 'est_civil'
+
+- Create this columns in 'legajos' table:
+	'borrable' 	fill all records with 0 (0 = no) for 'id_evento' = 10 (vacaciones)
+	'afecta_vac'	fill all records with 1 (1 = yes) for 'id_evento' = 10 (vacaciones)
+
+- Create column
 	
 - Populate column 'id_legajo' in 'legajos' table following the this procedure:
 	. First order all columns by 'fecha_desde' then by 'fecha_hasta' and finally by 'id_empleado'

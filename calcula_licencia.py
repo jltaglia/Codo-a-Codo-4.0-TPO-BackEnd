@@ -79,6 +79,7 @@ def calc_lic_en_curso(id_empleado, estado, *parametros):
         saldo_lic = 14
         dias_lic = 0
         fecha_regreso = dt.date.today()
+        fecha_fin = dt.date.today()
 
     else:
         # Licencia a gozar desde el fecha_inicio hasta el fecha_fin
