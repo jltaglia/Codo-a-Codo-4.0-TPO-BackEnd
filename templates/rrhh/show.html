@@ -7,26 +7,27 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col">
-                        <h5 class="card-title">Datos del Empleado Nº</h5>
-                    </div>
-                    <div class="col">
-                        <input id="txtIdEmpleado" type="text" class="form-control form-control-lg" aria-label="Disabled input example" name="txtIdEmpleado" value="{{empleado[0]}}" readonly></input>
+                        <h5 class="card-title">Datos del Empleado Nº {{empleado[0]}}</h5>
+                    <!-- </div>
+                    <div class="col"> -->
+                        <!-- <input id="txtIdEmpleado" type="text" class="form-control form-control-lg" aria-label="Disabled input example" name="txtIdEmpleado" value="{{empleado[0]}}" readonly></input> -->
+                        <!-- <label id="txtIdEmpleado" name="txtIdEmpleado" value="{{empleado[0]}}">{{empleado[0]}}</label> -->
                     </div>
                 </div>
             </div>
             <p class="card-text">
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-sm-5">
+                        <div class="col-md-auto">
+                            <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
+                        </div>
+                        <div class="col-8">
                             <label for="txtApellidos">Apellidos</label>
                             <input id="txtApellidos" type="text" class="form-control" placeholder="Apellidos completos" aria-label="First name" name="txtApellidos" value="{{empleado[3]}}" readonly></input>
-                        </div>
-                        <div class="col-sm-5">
+                        <!-- </div>
+                        <div class="col-sm-5"> -->
                             <label for="txtNombres">Nombres</label>
                             <input id="txtNombres" type="text" class="form-control" placeholder="Nombres completos" aria-label="Last name" name="txtNombres" value="{{empleado[4]}}" readonly></input>
-                        </div>
-                        <div class="col-sm">
-                            <img id="img_thumb_personal" class="img-thumbnail" width="100" src="{{url_for('uploads', nombreImg=empleado[1])}}" alt="">
                         </div>
                     </div>
                 </div>

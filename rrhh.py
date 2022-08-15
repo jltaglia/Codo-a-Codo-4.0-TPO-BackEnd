@@ -35,6 +35,7 @@ def uploads(nombreImg):
 
 
 @app.route('/')
+@app.route('/home')
 def index():
     sql = 'SELECT * FROM rrhh.personal ORDER BY apellidos, nombres;'
     conn = mysql.connect()
