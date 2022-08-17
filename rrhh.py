@@ -1,5 +1,6 @@
 from flask import Flask, flash
 from flask import render_template, request, redirect, send_from_directory, url_for, flash
+from flask_wtf.csrf import CSRFProtect
 from flaskext.mysql import MySQL
 from datetime import datetime
 import os
@@ -14,6 +15,7 @@ import win32api
 from fpdf import FPDF
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 app.secret_key = 'Clave'
 
 mysql = MySQL()
@@ -834,6 +836,11 @@ def borrar_lic(id_empleado):
 
     flash('La ultima licencia ha sido eliminada...!')
     return redirect(url_for('licencia', id_empleado=id_empleado))
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return 'Página no encontrada...', 404
 
 
 if __name__ == '__main__':
