@@ -1,3 +1,10 @@
+//
+// TODAS ESTAS FUNCIONES QUEDARON DE EL PROYECTO FRONTEND 
+// POR LAS DUDAS QUE ALGUNA SIRVIERA PARA EL PROYECTO BACKEND
+//
+
+
+
 document.getElementById("mi_footer").innerHTML = `
     <div class="social">
         <span><a href="https://www.facebook.com/profile.php?id=100075834332674" target="_blank"
