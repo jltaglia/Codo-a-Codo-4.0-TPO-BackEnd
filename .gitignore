@@ -6,6 +6,7 @@ pdf_test.py
 extensions.json
 .vscode
 *.mod
+varios.txt
 # - - - - - CARPETAS - - - - - - - 
 varios
 test

@@ -25,22 +25,33 @@
                 </tr>
             </thead>
             <tbody>
-                {% for empleado in empleados %}
-                    <tr>
-                        <td>{{empleado[0]}}</td>
-                        <td><img src="uploads/{{empleado[1]}}" alt="" class="img-thum" width = "80" height="95" ></td>
-                        <td>{{empleado[3]}}</td>
-                        <td>{{empleado[4]}}</td>
-                        <td>
-                            <a class="btn btn-outline-info" href="/show/{{empleado[0]}}">Ver</a>
-                            <a class="btn btn-outline-primary" href="/edit/{{empleado[0]}}">Editar</a>
-                            <a class="btn btn-outline-success" href="/licencia/{{empleado[0]}}">Licencias</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-outline-danger" href="/borrar/{{empleado[0]}}">Borrar</a>
-                        </td>
-                    </tr>
-                {% endfor %}
+                {% if empleados%}
+                    {% for empleado in empleados %}
+                        <tr>
+                            <td>{{empleado[0]}}</td>
+                            <td><img src="uploads/{{empleado[1]}}" alt="" class="img-thum" width = "80" height="95" ></td>
+                            <td>{{empleado[3]}}</td>
+                            <td>{{empleado[4]}}</td>
+                            <td>
+                                <a class="btn btn-outline-info" href="/show/{{empleado[0]}}">Ver</a>
+                                <a class="btn btn-outline-primary" href="/edit/{{empleado[0]}}">Editar</a>
+                                <a class="btn btn-outline-success" href="/licencia/{{empleado[0]}}">Licencias</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-danger" href="/borrar/{{empleado[0]}}">Borrar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td>No hay empleados para mostrar</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td></td>
+                <tr>
+            {% endif %}
             </tbody>
             <tfoot>
             </tfoot>

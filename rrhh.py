@@ -1,5 +1,11 @@
 from flask import Flask, flash
-from flask import render_template, request, redirect, send_from_directory, url_for, flash
+from flask import (render_template,
+                   request, 
+                   redirect, 
+                   send_from_directory,
+                   url_for,
+                   flash,
+                   jsonify)
 from flask_wtf.csrf import CSRFProtect
 from flaskext.mysql import MySQL
 from datetime import datetime
@@ -11,7 +17,11 @@ from os.path import exists
 
 # DEPENDENCIAS PARA IMPRIMIR LAS PLANILLA DE LICENCIAS
 import tempfile
-import win32api
+# esta libreria se rompió
+# import win32api
+# la reemplacé por esta otra
+import subprocess
+#
 from fpdf import FPDF
 
 app = Flask(__name__)
@@ -21,7 +31,7 @@ app.secret_key = 'Clave'
 mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = 'pep45051'
 app.config['MYSQL_DATABASE_DB'] = 'rrhh'
 mysql.init_app(app)
 
@@ -695,8 +705,12 @@ def updlicencia():
         # save the pdf with name .pdf
         pdf.output(pdf_file_name)
 
-        #
-        win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+        # comando viejo de la libreria rota
+        # win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+        # 
+        # reemplazado por este:
+        subprocess.Popen([pdf_file_name], shell=True)
+        # 
         # -----------------------------------------------------------------------------------------------------
 
     return redirect('/')
@@ -724,7 +738,12 @@ def reimp_licencia(id_empleado):
     nombre_pdf = f'{id_empleado}_{legajo[2].strftime("%d-%m-%Y")}_{legajo[3].strftime("%d-%m-%Y")}.pdf'
     pdf_file_name = os.path.join(PDFS, nombre_pdf)
     try:
-        win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+        # comando viejo de la libreria rota
+        # win32api.ShellExecute (0, "open", pdf_file_name, None, ".", 0)
+        # 
+        # reemplazado por este:
+        subprocess.Popen([pdf_file_name], shell=True)
+        # 
     except:
         flash('No existe la planilla requerida...!')
         return redirect(url_for('licencia', id_empleado=id_empleado))

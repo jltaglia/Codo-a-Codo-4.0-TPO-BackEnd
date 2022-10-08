@@ -1,13 +1,9 @@
+CREATE DATABASE rrhh;
 USE rrhh;
 
 CREATE TABLE categorias (
 id_categoria SMALLINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 descripcion VARCHAR(20) NOT NULL
-);
-
-CREATE TABLE tipo_doc (
-id_documento SMALLINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-descripcion VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE est_civil (
@@ -21,6 +17,11 @@ cd_evento SMALLINT NOT NULL,
 descripcion VARCHAR(20) NOT NULL
 );
 
+CREATE TABLE tipo_doc (
+id_documento SMALLINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+descripcion VARCHAR(10) NOT NULL
+);
+
 CREATE TABLE provincias (
 id_provincia SMALLINT NOT NULL PRIMARY KEY,
 nombre VARCHAR(31) NOT NULL
@@ -29,7 +30,7 @@ nombre VARCHAR(31) NOT NULL
 CREATE TABLE localidades (
 id_localidad INT NOT NULL,
 nombre VARCHAR(60) NOT NULL,
-cp SMALLINT NOT NULL,
+cp_localidad SMALLINT NOT NULL,
 id_provincia SMALLINT NOT NULL
 );
 
@@ -69,8 +70,7 @@ fecha_desde DATE NOT NULL,
 fecha_hasta DATE NOT NULL,
 id_evento SMALLINT NOT NULL,
 cd_evento SMALLINT NOT NULL,
-cantidad SMALLINT NOT NULL
+cantidad SMALLINT NOT NULL,
+borrable SMALLINT NOT NULL,
+afecta_vac SMALLINT NOT NULL
 );
-
-
-

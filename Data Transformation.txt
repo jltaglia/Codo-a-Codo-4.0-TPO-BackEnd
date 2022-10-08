@@ -3,20 +3,18 @@ DATA TRANSFORMATION
 - Open each 'dbf' file with Excel and then save in 'xlsx' format
 
 - Create in each of the following tables a 'id' column like this:
-	'id_empleado'   in 'personal'
-	'id_documento'  in 'tipo_doc'
+	'id_categoria'  in 'categorias'
+	'id_est_civil'  in 'est_civil'
 	'id_evento'     in 'eventos'
 	'id_evento'     in 'legajos'
 	'id_legajo'     in 'legajos'
-	'id_categoria'  in 'categorias'
 	'id_parentesco' in 'parentescos'
-	'id_est_civil'  in 'est_civil'
+	'id_empleado'   in 'personal'
+	'id_documento'  in 'tipo_doc'
 
 - Create this columns in 'legajos' table:
-	'borrable' 	fill all records with 0 (0 = no) for 'id_evento' = 10 (vacaciones)
-	'afecta_vac'	fill all records with 1 (1 = yes) for 'id_evento' = 10 (vacaciones)
-
-- Create column
+	'borrable' 	 fill all records with 0 (0 = no) for 'id_evento' = 10 (vacaciones)
+	'afecta_vac' fill all records with 1 (1 = yes) for 'id_evento' = 10 (vacaciones)
 	
 - Populate column 'id_legajo' in 'legajos' table following the this procedure:
 	. First order all columns by 'fecha_desde' then by 'fecha_hasta' and finally by 'id_empleado'
