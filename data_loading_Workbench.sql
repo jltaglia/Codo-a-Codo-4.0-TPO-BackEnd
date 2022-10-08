@@ -45,3 +45,9 @@ INTO TABLE localidades
 FIELDS TERMINATED BY ';' 
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/jltag/Mi unidad/2 - IT/Codo a Codo 2022 - FullStack Python/TPO Back/Varios/csv/legajos.csv' 
+INTO TABLE legajos
+FIELDS TERMINATED BY ';' 
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;

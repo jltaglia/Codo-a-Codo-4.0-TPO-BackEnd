@@ -3,9 +3,9 @@ from mysql.connector import Error
 import time
 
 # DATABASE PARAMETERS
-DB_NAME = 'test'
+DB_NAME = 'rrhh'
 DB_USER = 'root'
-DB_PASSWORD = ''
+DB_PASSWORD = 'pep45051'
 
 empieza = time.strftime("%m/%d/%Y, %H:%M:%S")
 
