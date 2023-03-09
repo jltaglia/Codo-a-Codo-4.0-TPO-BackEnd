@@ -20,5 +20,5 @@ pycparser==2.21
 PyMySQL==1.0.2
 pywin32==304
 SQLAlchemy==1.4.41
-Werkzeug==2.2.2
+Werkzeug==2.2.3
 WTForms==3.0.1
